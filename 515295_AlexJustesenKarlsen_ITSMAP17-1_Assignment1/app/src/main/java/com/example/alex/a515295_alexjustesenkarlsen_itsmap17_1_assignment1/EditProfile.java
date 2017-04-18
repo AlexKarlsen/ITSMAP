@@ -11,6 +11,12 @@ import android.widget.RadioButton;
 
 public class EditProfile extends AppCompatActivity {
 
+    //Saved state keys
+    static final String PROFILE_NAME = "Name";
+    static final String PROFILE_ID = "Id";
+    static final String ANDROID = "Android";
+
+    //UI elements
     EditText NameEditText;
     EditText IdEditText;
     RadioButton YesRadioButton;
@@ -21,6 +27,11 @@ public class EditProfile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
+        //Variables to acquire from intent or saveState
+        String name = "default";
+        String id = "default";
+        String android = "default";
+
         //Get references to UI elements
         NameEditText = (EditText) findViewById(R.id.editName);
         IdEditText = (EditText) findViewById(R.id.editId);
@@ -29,24 +40,31 @@ public class EditProfile extends AppCompatActivity {
 
         //Get Intent and it's values
         Intent FromActivityShowProfile = getIntent();
-        String name = FromActivityShowProfile.getStringExtra("Name");
-        String id = FromActivityShowProfile.getStringExtra("Id");
-        String android = FromActivityShowProfile.getStringExtra("Android");
+        if(FromActivityShowProfile != null) {
+            name = FromActivityShowProfile.getStringExtra("Name");
+            id = FromActivityShowProfile.getStringExtra("Id");
+            android = FromActivityShowProfile.getStringExtra("Android");
+        }
+
+        //Retrieve from saveState
+        if(savedInstanceState != null) {
+            name = savedInstanceState.getString(PROFILE_NAME);
+            id = savedInstanceState.getString(PROFILE_ID);
+        }
 
         //Set UI elements
         NameEditText.setText(name);
         IdEditText.setText(id);
 
-        if(android.equals("True")) {
+        if(android.equals(getResources().getString(R.string.yes))) {
             YesRadioButton.setChecked(true);
         }
-        else if (android.equals("False")) {
+        else if (android.equals(getResources().getString(R.string.no))) {
             NoRadioButton.setChecked(true);
         }
 
+        //Handling save event
         Button save = (Button) findViewById(R.id.btnSave);
-        Button cancel = (Button) findViewById(R.id.btnCancel);
-
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -54,6 +72,8 @@ public class EditProfile extends AppCompatActivity {
             }
         });
 
+        //Handle cancel event
+        Button cancel = (Button) findViewById(R.id.btnCancel);
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,10 +95,17 @@ public class EditProfile extends AppCompatActivity {
         intent.putExtra("Name",NameEditText.getText().toString());
         intent.putExtra("Id",IdEditText.getText().toString());
 
-        if (YesRadioButton.isChecked() == true) intent.putExtra("Android","True");
-        else if (NoRadioButton.isChecked() == true) intent.putExtra("Android", "False");
+        if (YesRadioButton.isChecked() == true) intent.putExtra("Android", getResources().getString(R.string.yes));
+        else if (NoRadioButton.isChecked() == true) intent.putExtra("Android", getResources().getString(R.string.no));
 
         setResult(RESULT_OK,intent);
         finish();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString(PROFILE_NAME, NameEditText.getText().toString());
+        outState.putString(PROFILE_ID, IdEditText.getText().toString());
+        super.onSaveInstanceState(outState);
     }
 }

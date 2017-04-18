@@ -15,6 +15,10 @@ public class ShowProfile extends AppCompatActivity {
     static final int REQ_IMAGE_CAPTURE = 1;
     static final int REQ_EDIT = 2;
 
+    static final String PROFILE_NAME = "Name";
+    static final String PROFILE_ID = "Id";
+    static final String ANDROID = "Android";
+
     EditText editTextName;
     EditText editTextId;
     EditText editTextAndroid;
@@ -24,6 +28,7 @@ public class ShowProfile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_profile);
 
+        //Get references to UI element and disable for inputs
         editTextName = (EditText) findViewById(R.id.editProfileName);
         editTextName.setFocusable(false);
         editTextName.setEnabled(false);
@@ -36,8 +41,15 @@ public class ShowProfile extends AppCompatActivity {
         editTextAndroid.setFocusable(false);
         editTextAndroid.setEnabled(false);
 
-        Button editButton = (Button) findViewById(R.id.Edit);
+        // recovering the instance state
+        if (savedInstanceState != null) {
+            editTextName.setText(savedInstanceState.getString(PROFILE_NAME));
+            editTextId.setText(savedInstanceState.getString(PROFILE_ID));
+            editTextAndroid.setText(savedInstanceState.getString(ANDROID));
+        }
 
+        //Handle EditButton
+        Button editButton = (Button) findViewById(R.id.Edit);
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -45,8 +57,8 @@ public class ShowProfile extends AppCompatActivity {
             }
         });
 
+        //Handle ImageButton
         ImageButton startCameraButton = (ImageButton) findViewById(R.id.imageButton);
-
         startCameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,6 +99,15 @@ public class ShowProfile extends AppCompatActivity {
             editTextId.setText(data.getStringExtra("Id"));
             editTextAndroid.setText(data.getStringExtra("Android"));
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState)
+    {
+        outState.putString("Name", editTextName.getText().toString());
+        outState.putString("Id", editTextId.getText().toString());
+        outState.putString("Android", editTextAndroid.getText().toString());
+        super.onSaveInstanceState(outState);
     }
 
 
