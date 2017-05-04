@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Jeg, Androide</string>
+    <string name="save_key">Gem</string>
+    <string name="cancel_key">Annullér</string>
+    <string name="edit_key">Ændre</string>
+    <string name="id_key">Id</string>
+    <string name="profileName_key">Navn</string>
+    <string name="androidDeveloper_key">Android Udvikler</string>
+    <string name="no">Nej</string>
+    <string name="yes">Ja</string>
+</resources>

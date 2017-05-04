@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">I, Android</string>
+    <string name="save_key">Save</string>
+    <string name="cancel_key">Cancel</string>
+    <string name="edit_key">Edit</string>
+    <string name="id_key">Id</string>
+    <string name="profileName_key">Name</string>
+    <string name="androidDeveloper_key">Android Developer</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+</resources>
