@@ -7,5 +7,5 @@
     <string name="android">Android Developer</string>
     <string name="trueword">True</string>
     <string name="falseword">False</string>
-    <string name="defaultinput">-</string>
+    <string name="defaultinput"></string>
 </resources>

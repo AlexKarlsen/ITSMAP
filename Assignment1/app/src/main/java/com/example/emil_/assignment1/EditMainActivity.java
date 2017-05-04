@@ -34,11 +34,13 @@ public class EditMainActivity extends AppCompatActivity {
 
         Intent fromActivityMain = getIntent();
         String name = fromActivityMain.getStringExtra(NAME_KEY);
-        String id = fromActivityMain.getStringExtra(ID_KEY);
+        // Default value should never be needed as the conversion is handled correctly before it is put in the intent
+        int id = fromActivityMain.getIntExtra(ID_KEY, -1);
         String android = fromActivityMain.getStringExtra(ANDROID_KEY);
 
         nameEditText.setText(name);
-        idEditText.setText(id);
+        if (id != -1)
+            idEditText.setText(String.valueOf(id));
         if (android.equals(getResources().getString(R.string.trueword))) {
             trueRadioButton.setChecked(true);
         }
@@ -67,7 +69,7 @@ public class EditMainActivity extends AppCompatActivity {
     public void Save(){
         Intent intent = new Intent(this, EditMainActivity.class);
         intent.putExtra(NAME_KEY, nameEditText.getText().toString());
-        intent.putExtra(ID_KEY, idEditText.getText().toString());
+        intent.putExtra(ID_KEY, getEditTextTextAsInt(idEditText));
 
         String android;
         if (trueRadioButton.isChecked())
@@ -86,5 +88,20 @@ public class EditMainActivity extends AppCompatActivity {
     public void Cancel(){
         setResult(RESULT_CANCELED);
         finish();
+    }
+
+    // Helper function to get id from IdEditText as int to ensure conversion failure is handled correctly and consistently.
+    // Will return -1 if parse fails.
+    public static int getEditTextTextAsInt(EditText editText)
+    {
+        int returnInt = -1;
+        try
+        {
+            returnInt = Integer.parseInt(editText.getText().toString());
+        }
+        catch (NumberFormatException e)
+        {}
+
+        return returnInt;
     }
 }

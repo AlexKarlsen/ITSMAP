@@ -2,6 +2,7 @@ package com.example.emil_.assignment1;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     TextView nameTextView;
     TextView idTextView;
     TextView androidTextView;
+    ImageButton imageButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,12 +39,16 @@ public class MainActivity extends AppCompatActivity {
         nameTextView = (TextView) findViewById(R.id.NameTextView);
         idTextView = (TextView) findViewById(R.id.IdTextView);
         androidTextView = (TextView) findViewById(R.id.AndroidTextView);
+        imageButton = (ImageButton) findViewById(R.id.imageButton);
 
         // recovering the instance state
         if (savedInstanceState != null) {
             nameTextView.setText(savedInstanceState.getString(NAME_KEY));
-            idTextView.setText(savedInstanceState.getString(ID_KEY));
+            if (savedInstanceState.getInt(ID_KEY) != -1)
+                idTextView.setText(String.valueOf(savedInstanceState.getInt(ID_KEY)));
             androidTextView.setText(savedInstanceState.getString(ANDROID_KEY));
+
+            imageButton.setImageBitmap((Bitmap) savedInstanceState.getParcelable(BITMAP_KEY));
         }
 
         FloatingActionButton button = (FloatingActionButton) findViewById(R.id.floatingActionButton);
@@ -52,8 +58,7 @@ public class MainActivity extends AppCompatActivity {
                 NavigateToEdit();
             }});
 
-        ImageButton imgButton = (ImageButton) findViewById(R.id.imageButton);
-        imgButton.setOnClickListener(new View.OnClickListener() {
+        imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dispatchTakePictureIntent();
@@ -65,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     {
         Intent intent = new Intent(this, EditMainActivity.class);
         intent.putExtra(NAME_KEY, nameTextView.getText().toString());
-        intent.putExtra(ID_KEY, idTextView.getText().toString());
+        intent.putExtra(ID_KEY, getTextViewTextAsInt(idTextView));
         intent.putExtra(ANDROID_KEY, androidTextView.getText().toString());
 
         startActivityForResult(intent, REQUEST_EDIT);
@@ -86,16 +91,17 @@ public class MainActivity extends AppCompatActivity {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
 
-            ImageButton imgButton = (ImageButton) findViewById(R.id.imageButton);
-            imgButton.setImageBitmap(imageBitmap);
+            imageButton.setImageBitmap(imageBitmap);
         }
         else if (requestCode == REQUEST_EDIT && resultCode == RESULT_OK) {
             String name = data.getStringExtra(NAME_KEY);
-            String id = data.getStringExtra(ID_KEY);
+            // Default value should never be needed as the conversion is handled correctly before it is put in the intent
+            int id = data.getIntExtra(ID_KEY, -1);
             String android = data.getStringExtra(ANDROID_KEY);
 
             nameTextView.setText(name);
-            idTextView.setText(id);
+            if (id != -1)
+                idTextView.setText(String.valueOf(id));
             androidTextView.setText(android);
         }
     }
@@ -104,10 +110,26 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString(NAME_KEY, nameTextView.getText().toString());
-        outState.putString(ID_KEY, idTextView.getText().toString());
+        outState.putInt(ID_KEY, getTextViewTextAsInt(idTextView));
         outState.putString(ANDROID_KEY, androidTextView.getText().toString());
 
+        outState.putParcelable(BITMAP_KEY, ((BitmapDrawable)imageButton.getDrawable()).getBitmap());
         // call superclass to save any view hierarchy
         super.onSaveInstanceState(outState);
+    }
+
+    // Helper function to get id from IdTextView as int to ensure conversion failure is handled correctly and consistently.
+    // Will return -1 if parse fails.
+    public static int getTextViewTextAsInt(TextView textView)
+    {
+        int returnInt = -1;
+        try
+        {
+            returnInt = Integer.parseInt(textView.getText().toString());
+        }
+        catch (NumberFormatException e)
+        {}
+
+        return returnInt;
     }
 }
