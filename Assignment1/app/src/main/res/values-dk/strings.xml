@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Assignment1</string>
+    <string name="name">Navn</string>
+    <string name="save">Gem</string>
+    <string name="cancel">Annullér</string>
+    <string name="id">ID</string>
+    <string name="android">Android Udvikler</string>
+    <string name="trueword">Ja</string>
+    <string name="falseword">Nej</string>
+    <string name="defaultinput">" "</string>
+</resources>
