@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         outState.putString(NAME_KEY, nameTextView.getText().toString());
         outState.putString(ID_KEY, idTextView.getText().toString());
         outState.putString(ANDROID_KEY, androidTextView.getText().toString());
-        
+
         // call superclass to save any view hierarchy
         super.onSaveInstanceState(outState);
     }
