@@ -19,9 +19,7 @@ public class ShowProfile extends AppCompatActivity {
     static final String PROFILE_ID = "Id";
     static final String ANDROID = "Android";
 
-    EditText editTextName;
-    EditText editTextId;
-    EditText editTextAndroid;
+    EditText editTextName, editTextId, editTextAndroid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +42,7 @@ public class ShowProfile extends AppCompatActivity {
         // recovering the instance state
         if (savedInstanceState != null) {
             editTextName.setText(savedInstanceState.getString(PROFILE_NAME));
-            editTextId.setText(savedInstanceState.getString(PROFILE_ID));
+            editTextId.setText(Integer.toString(savedInstanceState.getInt(PROFILE_ID)));
             editTextAndroid.setText(savedInstanceState.getString(ANDROID));
         }
 
@@ -70,9 +68,20 @@ public class ShowProfile extends AppCompatActivity {
     public void NavigateToEditProfile()
     {
         Intent intent = new Intent(ShowProfile.this, EditProfile.class);
-        intent.putExtra("Name", editTextName.getText().toString());
-        intent.putExtra("Id", editTextId.getText().toString());
-        intent.putExtra("Android", editTextAndroid.getText().toString());
+        if(editTextName != null)
+            intent.putExtra("Name", editTextName.getText().toString());
+        if(editTextId != null && !editTextId.getText().toString().equals(""))
+            try {
+                intent.putExtra("Id", Integer.parseInt(editTextId.getText().toString()));
+            }
+            catch(NumberFormatException ex)
+            {
+
+            }
+
+        if(editTextAndroid != null)
+            intent.putExtra("Android", editTextAndroid.getText().toString());
+
         startActivityForResult(intent, REQ_EDIT);
     }
 
@@ -96,7 +105,7 @@ public class ShowProfile extends AppCompatActivity {
         else if (requestCode == REQ_EDIT && resultCode == RESULT_OK)
         {
             editTextName.setText(data.getStringExtra("Name"));
-            editTextId.setText(data.getStringExtra("Id"));
+            editTextId.setText(Integer.toString(data.getIntExtra("Id",0)));
             editTextAndroid.setText(data.getStringExtra("Android"));
         }
     }
@@ -105,7 +114,7 @@ public class ShowProfile extends AppCompatActivity {
     public void onSaveInstanceState(Bundle outState)
     {
         outState.putString("Name", editTextName.getText().toString());
-        outState.putString("Id", editTextId.getText().toString());
+        outState.putInt("Id", Integer.parseInt(editTextId.getText().toString()));
         outState.putString("Android", editTextAndroid.getText().toString());
         super.onSaveInstanceState(outState);
     }

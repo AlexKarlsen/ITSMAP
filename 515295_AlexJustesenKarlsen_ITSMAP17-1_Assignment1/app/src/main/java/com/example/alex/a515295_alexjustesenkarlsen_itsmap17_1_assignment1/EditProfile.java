@@ -29,7 +29,7 @@ public class EditProfile extends AppCompatActivity {
 
         //Variables to acquire from intent or saveState
         String name = "default";
-        String id = "default";
+        int id = 0;
         String android = "default";
 
         //Get references to UI elements
@@ -42,19 +42,19 @@ public class EditProfile extends AppCompatActivity {
         Intent FromActivityShowProfile = getIntent();
         if(FromActivityShowProfile != null) {
             name = FromActivityShowProfile.getStringExtra("Name");
-            id = FromActivityShowProfile.getStringExtra("Id");
+            id = FromActivityShowProfile.getIntExtra("Id", 0);
             android = FromActivityShowProfile.getStringExtra("Android");
         }
 
         //Retrieve from saveState
         if(savedInstanceState != null) {
             name = savedInstanceState.getString(PROFILE_NAME);
-            id = savedInstanceState.getString(PROFILE_ID);
+            id = savedInstanceState.getInt(PROFILE_ID);
         }
 
         //Set UI elements
         NameEditText.setText(name);
-        IdEditText.setText(id);
+        IdEditText.setText(""+Integer.toString(id));
 
         if(android.equals(getResources().getString(R.string.yes))) {
             YesRadioButton.setChecked(true);
@@ -81,7 +81,6 @@ public class EditProfile extends AppCompatActivity {
             }
         });
 
-
     }
 
     private void Cancel() {
@@ -92,9 +91,13 @@ public class EditProfile extends AppCompatActivity {
     private void Save()
     {
         Intent intent = new Intent();
-        intent.putExtra("Name",NameEditText.getText().toString());
-        intent.putExtra("Id",IdEditText.getText().toString());
+        intent.putExtra("Name", NameEditText.getText().toString());
+        
+        //Converting from string to integer, is done due to assignment requirements
+        //Redundant conversion from string to int
+        intent.putExtra("Id", Integer.parseInt(IdEditText.getText().toString()));
 
+        //No conversion to boolean because i want to keep the language independent and a true/false boolean is not
         if (YesRadioButton.isChecked() == true) intent.putExtra("Android", getResources().getString(R.string.yes));
         else if (NoRadioButton.isChecked() == true) intent.putExtra("Android", getResources().getString(R.string.no));
 
@@ -105,7 +108,9 @@ public class EditProfile extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString(PROFILE_NAME, NameEditText.getText().toString());
-        outState.putString(PROFILE_ID, IdEditText.getText().toString());
+        
+        //Converting to int required
+        outState.putInt(PROFILE_ID, Integer.parseInt(IdEditText.getText().toString()));
         super.onSaveInstanceState(outState);
     }
 }
