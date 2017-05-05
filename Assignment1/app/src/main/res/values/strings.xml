@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Assignment1</string>
+    <string name="name">Name</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="id">ID</string>
+    <string name="android">Android Developer</string>
+    <string name="trueword">True</string>
+    <string name="falseword">False</string>
+    <string name="defaultinput"></string>
+</resources>
