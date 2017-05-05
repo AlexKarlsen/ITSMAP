@@ -42,7 +42,7 @@ public class EditProfile extends AppCompatActivity {
         Intent FromActivityShowProfile = getIntent();
         if(FromActivityShowProfile != null) {
             name = FromActivityShowProfile.getStringExtra("Name");
-            id = FromActivityShowProfile.getIntExtra("Id", 0);
+            id = FromActivityShowProfile.getIntExtra("Id", -1);
             android = FromActivityShowProfile.getStringExtra("Android");
         }
 
@@ -54,7 +54,12 @@ public class EditProfile extends AppCompatActivity {
 
         //Set UI elements
         NameEditText.setText(name);
-        IdEditText.setText(""+Integer.toString(id));
+
+        //If id=-1 then the text field was empty and should remain that way. (Stupid conversion to int instead of keeping it as a string)
+        if(id == -1)
+            IdEditText.setText("");
+        else
+            IdEditText.setText(String.valueOf(id));
 
         if(android.equals(getResources().getString(R.string.yes))) {
             YesRadioButton.setChecked(true);

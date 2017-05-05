@@ -70,15 +70,17 @@ public class ShowProfile extends AppCompatActivity {
         Intent intent = new Intent(ShowProfile.this, EditProfile.class);
         if(editTextName != null)
             intent.putExtra("Name", editTextName.getText().toString());
-        if(editTextId != null && !editTextId.getText().toString().equals(""))
-            try {
-                intent.putExtra("Id", Integer.parseInt(editTextId.getText().toString()));
-            }
-            catch(NumberFormatException ex)
-            {
 
-            }
+        if(editTextId != null) {
+            if (editTextId.getText().toString().equals(""))
+                intent.putExtra("Id", -1);
+            else
+                try {
+                    intent.putExtra("Id", Integer.parseInt(editTextId.getText().toString()));
+                } catch (NumberFormatException ex) {
 
+                }
+        }
         if(editTextAndroid != null)
             intent.putExtra("Android", editTextAndroid.getText().toString());
 
@@ -114,7 +116,16 @@ public class ShowProfile extends AppCompatActivity {
     public void onSaveInstanceState(Bundle outState)
     {
         outState.putString("Name", editTextName.getText().toString());
-        outState.putInt("Id", Integer.parseInt(editTextId.getText().toString()));
+
+        //Needed try/catch to prevent the app from crashing. It crashes due to parseInt when nothing is set in the text box
+        try {
+            outState.putInt("Id", Integer.parseInt(editTextId.getText().toString()));
+        }
+        catch(NumberFormatException ex)
+        {
+        //Do nothing. The intent int has a default value
+        }
+
         outState.putString("Android", editTextAndroid.getText().toString());
         super.onSaveInstanceState(outState);
     }
