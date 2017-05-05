@@ -7,8 +7,8 @@ import java.sql.Timestamp;
  */
 
 public class WeatherInfo {
-    int id;                     // (corresponding to database entry)
-    String weatherDescription;  // (text)
-    double temperature;         // (in celcius)
-    Timestamp timestamp;        // (when the data is from)
+    public int id;                     // (corresponding to database entry)
+    public String weatherDescription;  // (text)
+    public double temperature;         // (in celcius)
+    public Timestamp timestamp;        // (when the data is from)
 }
