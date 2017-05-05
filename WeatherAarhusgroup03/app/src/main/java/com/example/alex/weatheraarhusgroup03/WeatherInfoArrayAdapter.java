@@ -36,7 +36,7 @@ public class WeatherInfoArrayAdapter extends ArrayAdapter<WeatherInfo> {
         // Inflate the view if it is null.
         if (weatherInfoView == null) {
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            weatherInfoView = inflater.inflate(R.layout.list_item, null);
+            weatherInfoView = inflater.inflate(R.layout.weather_info_list_item, null);
         }
 
         // Update the weatherInfoView with the weather info.
