@@ -2,6 +2,8 @@ package com.example.alex.weatheraarhusgroup03.Helpers;
 
 import android.util.Log;
 
+import com.android.volley.RequestQueue;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,6 +12,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
+
 
 /**
  * Created by Alex on 07/05/2017.
@@ -95,4 +98,6 @@ public class UrlHelper {
         //Return full string
         return s;
     }
+
+
 }

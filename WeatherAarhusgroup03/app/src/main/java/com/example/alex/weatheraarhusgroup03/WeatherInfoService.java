@@ -4,20 +4,20 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import com.example.alex.weatheraarhusgroup03.Helpers.UrlHelper;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.ProtocolException;
-import java.net.URL;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.alex.weatheraarhusgroup03.Helpers.WeatherJsonParser;
 
 public class WeatherInfoService extends Service {
+
+    public static final String BROADCAST_BACKGROUND_SERVICE_RESULT = "BROADCAST_BACKGROUND_SERVICE_RESULT";
 
     //Logging keys
     private static final String LOG = "WeatherInfoService";
@@ -64,8 +64,8 @@ public class WeatherInfoService extends Service {
 
 
     //Helper method for readability and not editing borrowed method.
-    private String getWeatherInfo() {
-        return UrlHelper.callURL(API_CALL);
+    private void getWeatherInfo() {
+        sendRequest(API_CALL);
     }
 
     //The function starts a task that gets the weather information by a given interval. The task recursively calls itself by the interval.
@@ -82,8 +82,7 @@ public class WeatherInfoService extends Service {
                 String s = "Background job";
                 try {
                     Log.d(LOG, "Task started");
-                    result = getWeatherInfo();
-                    Log.d(LOG, "Retrieved weather data: " + result);
+                    getWeatherInfo();
                     Thread.sleep(interval);
                     Log.d(LOG, "Task completed");
                 } catch (Exception e) {
@@ -114,5 +113,50 @@ public class WeatherInfoService extends Service {
         started = false;
         Log.d(LOG,"Background service destroyed");
         super.onDestroy();
+    }
+
+    private void broadcastTaskResult(String result){
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction(BROADCAST_BACKGROUND_SERVICE_RESULT);
+        Log.d(LOG, "Broadcasting:" + result);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
+    }
+
+    //for Volley
+    RequestQueue queue;
+
+    public void sendRequest(String callUrl){
+        //send request using Volley
+        if(queue==null){
+            queue = Volley.newRequestQueue(this);
+        }
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, callUrl,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        String result;
+
+                        //Interpret JSON response as string
+                        result = interpretWeatherJSON(response);
+                        Log.d(LOG, "Retrieved weather data: " + result);
+
+                        //Broadcast result
+                        broadcastTaskResult(result);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        });
+
+        queue.add(stringRequest);
+
+    }
+
+    //attempt to decode the json response from weather server
+    public String interpretWeatherJSON(String jsonResponse){
+
+        return WeatherJsonParser.parseCityWeatherJson(jsonResponse);
     }
 }
