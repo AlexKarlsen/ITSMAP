@@ -1,14 +1,17 @@
 package com.example.alex.weatheraarhusgroup03;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -49,6 +52,16 @@ public class MainActivity extends AppCompatActivity {
         bindService(backgroundServiceIntent, connection, Context.BIND_AUTO_CREATE);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // Register broadcast receivers.
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("");
+        LocalBroadcastManager.getInstance(this).registerReceiver(onWeatherServiceResult, filter);
+    }
+
     // Modified from: https://developer.android.com/guide/components/bound-services.html#Binder
     private ServiceConnection connection = new ServiceConnection() {
 
@@ -78,11 +91,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
 
-        // Unbind from the service
+        // Unbind from the service;
         if (bound) {
             unbindService(connection);
             bound = false;
         }
+
+        // Unregister broadcast receiver.
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onWeatherServiceResult);
     }
 
     private void initializeSubviews() {
@@ -105,14 +121,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                // Call the service...
-                updateCurrentView(weatherInfoService.getCurrentWeather());
-                updateHistoricListView(weatherInfoService.getPastWeather());
+                // Call the service.
+                getDataFromServiceAndUpdateViews();
             }
         });
     }
 
-    // Updating the ui elements with data.
+    private void getDataFromServiceAndUpdateViews() {
+        updateCurrentView(weatherInfoService.getCurrentWeather());
+        updateHistoricListView(weatherInfoService.getPastWeather());
+    }
+
+    // MARK: - Updating the ui elements with data.
 
     private void updateHistoricListView(ArrayList<WeatherInfo> historicData) {
 
@@ -151,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Orientation-based layout.
+    // MARK: - Orientation-based layout.
 
     @Override
     public void onConfigurationChanged(Configuration configuration) {
@@ -174,4 +194,12 @@ public class MainActivity extends AppCompatActivity {
             mainLinearLayout.setOrientation(LinearLayout.VERTICAL);
         }
     }
+
+    private BroadcastReceiver onWeatherServiceResult = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Call the service.
+            getDataFromServiceAndUpdateViews();
+        }
+    };
 }
