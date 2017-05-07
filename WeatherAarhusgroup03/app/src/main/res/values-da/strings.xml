@@ -2,4 +2,6 @@
 <resources>
     <string name="title_current">Vejret lige nu</string>
     <string name="title_historic">Sidste 24 timer</string>
+    <string name="update_success">Vejr opdateret</string>
+    <string name="update_failed">Vejr opdatering fejlede</string>
 </resources>
