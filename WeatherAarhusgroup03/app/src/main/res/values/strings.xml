@@ -2,4 +2,6 @@
     <string name="app_name">Weather Aarhus group 03</string>
     <string name="title_current">Current weather</string>
     <string name="title_historic">Last 24 hours</string>
+    <string name="update_success">Weather info updated</string>
+    <string name="update_failed">Weather update failed</string>
 </resources>

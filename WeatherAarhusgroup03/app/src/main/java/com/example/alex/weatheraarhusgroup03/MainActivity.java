@@ -19,6 +19,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -130,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
     private void getDataFromServiceAndUpdateViews() {
         updateCurrentView(weatherInfoService.getCurrentWeather());
         updateHistoricListView(weatherInfoService.getPastWeather());
+        Toast.makeText(MainActivity.this, R.string.update_success, Toast.LENGTH_SHORT).show();
     }
 
     // MARK: - Updating the ui elements with data.
@@ -198,8 +200,19 @@ public class MainActivity extends AppCompatActivity {
     private BroadcastReceiver onWeatherServiceResult = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            // Call the service.
-            getDataFromServiceAndUpdateViews();
+
+            // Check if the service was successful.
+            Boolean success = intent.getBooleanExtra(WeatherInfoService.EXTRA_STATUS, false);
+
+            if (success) {
+
+                // Call the service.
+                getDataFromServiceAndUpdateViews();
+            } else {
+
+                // Display a toast.
+                Toast.makeText(MainActivity.this, R.string.update_failed, Toast.LENGTH_SHORT).show();
+            }
         }
     };
 }
