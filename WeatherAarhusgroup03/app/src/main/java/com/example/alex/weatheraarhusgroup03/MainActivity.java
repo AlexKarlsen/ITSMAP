@@ -1,5 +1,6 @@
 package com.example.alex.weatheraarhusgroup03;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
@@ -34,6 +35,10 @@ public class MainActivity extends AppCompatActivity {
         // Update the layout based on the initial orientation.
         int orientation = getResources().getConfiguration().orientation;
         updateLayoutForOrientation(orientation);
+
+        // Start background service with intent
+        Intent backgroundServiceIntent = new Intent(MainActivity.this, WeatherInfoService.class);
+        startService(backgroundServiceIntent);
     }
 
     private void initializeSubviews() {
@@ -57,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 // Call the service...
+
             }
         });
     }
