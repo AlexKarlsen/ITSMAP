@@ -155,6 +155,7 @@ public class WeatherInfoService extends Service {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Log.d(LOG, "Error receiving weather data: " + error.getLocalizedMessage());
             }
         });
 
