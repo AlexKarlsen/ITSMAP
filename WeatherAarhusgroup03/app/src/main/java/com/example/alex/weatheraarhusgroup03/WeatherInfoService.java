@@ -19,11 +19,17 @@ import com.example.alex.weatheraarhusgroup03.Helpers.WeatherJsonParser;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
+/**
+ * Created by Alex on 05/05/17
+ * Edited by Alex on 07/05/17
+ */
 
 public class WeatherInfoService extends Service {
 
+    //Intent keys
     public static final String BROADCAST_BACKGROUND_SERVICE_RESULT = "BROADCAST_BACKGROUND_SERVICE_RESULT";
     public static final String EXTRA_STATUS = "EXTRA_STATUS";
+
     //Logging keys
     private static final String LOG = "WeatherInfoService";
 
@@ -36,10 +42,13 @@ public class WeatherInfoService extends Service {
     private static final long UPDATE_INTERVAL = 1800000; // 30 min.
     private boolean started = false;
 
+    //Database helper
     private static DatabaseHelper dbHelper;
 
-    public WeatherInfoService() {
-    }
+    //Queue for Volley
+    RequestQueue queue;
+
+    public WeatherInfoService() { }
 
     @Override
     public void onCreate() {
@@ -56,10 +65,9 @@ public class WeatherInfoService extends Service {
             started = true;
             getWeatherInfoByInterval(UPDATE_INTERVAL);
         } else {
-            Log.d(LOG, "Background service onStartCommand - already started. Get current weather info");
+            Log.d(LOG, "Background service onStartCommand - already started.");
         }
         return START_STICKY;
-        //return super.onStartCommand(intent, flags, startId);
     }
 
     //Helper method for readability and not editing borrowed method.
@@ -67,7 +75,9 @@ public class WeatherInfoService extends Service {
         sendRequest(API_CALL);
     }
 
-    //The function starts a task that gets the weather information by a given interval. The task recursively calls itself by the interval.
+    //The function starts a task that gets the weather information by a given interval.
+    //The task recursively calls itself by the interval.
+    //Strongly inspired from the service demo from class
     private void getWeatherInfoByInterval(final long interval) {
 
         AsyncTask<Object, Object, String> task = new AsyncTask<Object, Object, String>(){
@@ -96,10 +106,7 @@ public class WeatherInfoService extends Service {
             @Override
             protected void onPostExecute(String stringResult) {
                 super.onPostExecute(stringResult);
-
-                if (started) {
-                    getWeatherInfoByInterval(UPDATE_INTERVAL);
-                }
+                if (started) { getWeatherInfoByInterval(UPDATE_INTERVAL); }
             }
 
         };
@@ -114,7 +121,7 @@ public class WeatherInfoService extends Service {
         super.onDestroy();
     }
 
-
+    //Broadcasting completion status to the activity
     private void broadcastTaskResult(Boolean success){
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(BROADCAST_BACKGROUND_SERVICE_RESULT);
@@ -123,9 +130,7 @@ public class WeatherInfoService extends Service {
         LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
     }
 
-    //for Volley
-    RequestQueue queue;
-
+    //Send Http request using volley. Inspired by the weather app demo
     public void sendRequest(String callUrl){
         //send request using Volley
         if(queue==null){
@@ -135,13 +140,13 @@ public class WeatherInfoService extends Service {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        //
+                        //Deserialize Json response to a weatherinfo object
                         WeatherInfo weatherinfo = interpretWeatherJSON(response);
 
                         //Write to database
                         dbHelper.insertWeatherInfo(weatherinfo);
 
-                        //Broadcast result
+                        //On success broadcast result
                         broadcastTaskResult(true);
                     }
                 }, new Response.ErrorListener() {
@@ -150,29 +155,20 @@ public class WeatherInfoService extends Service {
                 broadcastTaskResult(false);
             }
         });
-
         queue.add(stringRequest);
-
     }
 
-    //attempt to decode the json response from weather server
-    public WeatherInfo interpretWeatherJSON(String jsonResponse){
+    //Attempt to decode the json response from weather server
+    public WeatherInfo interpretWeatherJSON(String jsonResponse){ return WeatherJsonParser.parseCityWeatherJson(jsonResponse); }
 
-        return WeatherJsonParser.parseCityWeatherJson(jsonResponse);
-	}	
-	
-    // Interface.
-
-    public WeatherInfo getCurrentWeather() {
-        return createHistoricTestInfo().get(0);
-    }
-
+    //Required functions to call from activity
+	//public WeatherInfo getCurrentWeather() { return createHistoricTestInfo().get(0);}
     ArrayList<WeatherInfo> getPastWeather() {
         return dbHelper.get24HoursWeatherInfo();
     }
 
-    // Binding.
 
+    //Interface.
     private final IBinder weatherInfoServiceBinder = new WeatherInfoServiceBinder();
 
     @Override
@@ -180,15 +176,10 @@ public class WeatherInfoService extends Service {
         return weatherInfoServiceBinder;
     }
 
-    public class WeatherInfoServiceBinder extends Binder {
+    //Binding.
+    public class WeatherInfoServiceBinder extends Binder { WeatherInfoService getService() {return WeatherInfoService.this;}}
 
-        WeatherInfoService getService() {
-            return WeatherInfoService.this;
-        }
-    }
-
-    // Test data.
-
+    //Test data.
     private ArrayList<WeatherInfo> createHistoricTestInfo() {
 
         // Initialize the list of historic weather info with adapter.
