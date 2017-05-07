@@ -1,9 +1,17 @@
 package com.example.alex.weatheraarhusgroup03;
 
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.res.Configuration;
+import android.graphics.Color;
+import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -12,10 +20,12 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+
+    WeatherInfoService weatherInfoService;
+    Boolean bound = false;
 
     LinearLayout mainLinearLayout;
     TextView currentTemperatureTextView;
@@ -37,8 +47,58 @@ public class MainActivity extends AppCompatActivity {
         updateLayoutForOrientation(orientation);
 
         // Start background service with intent
-        Intent backgroundServiceIntent = new Intent(MainActivity.this, WeatherInfoService.class);
+        Intent backgroundServiceIntent = new Intent(this, WeatherInfoService.class);
         startService(backgroundServiceIntent);
+        bindService(backgroundServiceIntent, connection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // Register broadcast receivers.
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("");
+        LocalBroadcastManager.getInstance(this).registerReceiver(onWeatherServiceResult, filter);
+    }
+
+    // Modified from: https://developer.android.com/guide/components/bound-services.html#Binder
+    private ServiceConnection connection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+
+            // Cast the IBinder and get WeatherInfoService instance.
+            WeatherInfoService.WeatherInfoServiceBinder binder = (WeatherInfoService.WeatherInfoServiceBinder) service;
+            weatherInfoService = binder.getService();
+            bound = true;
+
+            // Update the views with data from the service.
+            if (weatherInfoService != null) {
+                updateCurrentView(weatherInfoService.getCurrentWeather());
+                updateHistoricListView(weatherInfoService.getPastWeather());
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            bound = false;
+        }
+    };
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        // Unbind from the service;
+        if (bound) {
+            unbindService(connection);
+            bound = false;
+        }
+
+        // Unregister broadcast receiver.
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onWeatherServiceResult);
     }
 
     private void initializeSubviews() {
@@ -51,23 +111,32 @@ public class MainActivity extends AppCompatActivity {
         historicWeatherInfoListView = (ListView) findViewById(R.id.historicWeatherInfoListView);
         refreshFab = (FloatingActionButton) findViewById(R.id.refreshFab);
 
-        // Update the historic list view with the latest 24 hr weather info.
-        ArrayList<WeatherInfo> historicWeatherInfo = createHistoricTestInfo();
-        updateHistoricListView(historicWeatherInfo);
-        updateCurrentView(historicWeatherInfo.get(0));
+        // Clear the current textViews.
+        currentColorFrameLayout.setBackgroundColor(Color.WHITE);
+        currentDescriptionTextView.setText("");
+        currentTemperatureTextView.setText("");
 
         // Add on click handler to the refresh fab.
         refreshFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                // Call the service...
-
+                // Call the service.
+                getDataFromServiceAndUpdateViews();
             }
         });
     }
 
+    private void getDataFromServiceAndUpdateViews() {
+        updateCurrentView(weatherInfoService.getCurrentWeather());
+        updateHistoricListView(weatherInfoService.getPastWeather());
+    }
+
+    // MARK: - Updating the ui elements with data.
+
     private void updateHistoricListView(ArrayList<WeatherInfo> historicData) {
+
+        if (historicData == null) { return; }
 
         // Populate the list view with the weather info using a custom adapter.
         WeatherInfoArrayAdapter adapter = new WeatherInfoArrayAdapter(this, R.layout.weather_info_list_item, historicData);
@@ -75,6 +144,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateCurrentView(WeatherInfo currentInfo) {
+
+        if (currentInfo == null) { return; }
 
         // Update the 'current' textViews with data from the weather info.
         currentTemperatureTextView.setText(String.format("%.1f°C", currentInfo.temperature));
@@ -100,58 +171,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private ArrayList<WeatherInfo> createHistoricTestInfo() {
-
-        // Initialize the list of historic weather info with adapter.
-        ArrayList<WeatherInfo> testWeatherInfo = new ArrayList<WeatherInfo>();
-
-        WeatherInfo w1 = new WeatherInfo();
-        w1.id = 1;
-        w1.temperature = 24.7;
-        w1.weatherDescription = "Cloudy";
-        w1.timestamp = new Timestamp(System.currentTimeMillis());
-
-        WeatherInfo w2 = new WeatherInfo();
-        w2.id = 2;
-        w2.temperature = 25.1;
-        w2.weatherDescription = "Cloudy";
-        w2.timestamp = new Timestamp(System.currentTimeMillis());
-
-        WeatherInfo w3 = new WeatherInfo();
-        w3.id = 3;
-        w3.temperature = 28.7;
-        w3.weatherDescription = "Sunny";
-        w3.timestamp = new Timestamp(System.currentTimeMillis());
-
-        WeatherInfo w4 = new WeatherInfo();
-        w4.id = 4;
-        w4.temperature = 29.1;
-        w4.weatherDescription = "Sunny";
-        w4.timestamp = new Timestamp(System.currentTimeMillis());
-
-        WeatherInfo w5 = new WeatherInfo();
-        w5.id = 1;
-        w5.temperature = 30.4;
-        w5.weatherDescription = "Sunny";
-        w5.timestamp = new Timestamp(System.currentTimeMillis());
-
-        WeatherInfo w6 = new WeatherInfo();
-        w6.id = 1;
-        w6.temperature = 28.7;
-        w6.weatherDescription = "Sunny with rain";
-        w6.timestamp = new Timestamp(System.currentTimeMillis());
-
-        testWeatherInfo.add(w1);
-        testWeatherInfo.add(w2);
-        testWeatherInfo.add(w3);
-        testWeatherInfo.add(w4);
-        testWeatherInfo.add(w5);
-        testWeatherInfo.add(w6);
-
-        return testWeatherInfo;
-    }
-
-    // Orientation-based layout.
+    // MARK: - Orientation-based layout.
 
     @Override
     public void onConfigurationChanged(Configuration configuration) {
@@ -174,4 +194,12 @@ public class MainActivity extends AppCompatActivity {
             mainLinearLayout.setOrientation(LinearLayout.VERTICAL);
         }
     }
+
+    private BroadcastReceiver onWeatherServiceResult = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Call the service.
+            getDataFromServiceAndUpdateViews();
+        }
+    };
 }
