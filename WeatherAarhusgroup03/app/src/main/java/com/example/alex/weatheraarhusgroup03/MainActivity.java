@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Register broadcast receivers.
         IntentFilter filter = new IntentFilter();
-        filter.addAction("");
+        filter.addAction(WeatherInfoService.BROADCAST_BACKGROUND_SERVICE_RESULT);
         LocalBroadcastManager.getInstance(this).registerReceiver(onWeatherServiceResult, filter);
     }
 
