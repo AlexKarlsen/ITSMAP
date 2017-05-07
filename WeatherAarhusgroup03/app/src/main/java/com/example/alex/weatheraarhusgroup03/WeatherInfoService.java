@@ -23,7 +23,7 @@ import java.util.ArrayList;
 public class WeatherInfoService extends Service {
 
     public static final String BROADCAST_BACKGROUND_SERVICE_RESULT = "BROADCAST_BACKGROUND_SERVICE_RESULT";
-
+    public static final String EXTRA_STATUS = "EXTRA_STATUS";
     //Logging keys
     private static final String LOG = "WeatherInfoService";
 
@@ -113,10 +113,11 @@ public class WeatherInfoService extends Service {
     }
 
 
-    private void broadcastTaskResult(String result){
+    private void broadcastTaskResult(String result, Boolean success){
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(BROADCAST_BACKGROUND_SERVICE_RESULT);
-        Log.d(LOG, "Broadcasting:" + result);
+        broadcastIntent.putExtra(EXTRA_STATUS, success);
+        Log.d(LOG, "Broadcasting: " + result);
         LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
     }
 
@@ -128,24 +129,22 @@ public class WeatherInfoService extends Service {
         if(queue==null){
             queue = Volley.newRequestQueue(this);
         }
-
         StringRequest stringRequest = new StringRequest(Request.Method.GET, callUrl,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         String result;
-
                         //Interpret JSON response as string
                         result = interpretWeatherJSON(response);
                         Log.d(LOG, "Retrieved weather data: " + result);
 
                         //Broadcast result
-                        broadcastTaskResult(result);
+                        broadcastTaskResult(result, true);
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d(LOG, "Error receiving weather data: " + error.getLocalizedMessage());
+                broadcastTaskResult(error.getLocalizedMessage(),false);
             }
         });
 
