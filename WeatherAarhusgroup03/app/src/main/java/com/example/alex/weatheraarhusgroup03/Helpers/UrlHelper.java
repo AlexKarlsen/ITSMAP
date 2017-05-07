@@ -78,7 +78,7 @@ public class UrlHelper {
     }
 
     //This function is borrowed from Leafcastle's WeatherServiceDemo
-    private String convertStreamToStringBuffered(InputStream is) {
+    private static String convertStreamToStringBuffered(InputStream is) {
         String s = "";
         String line = "";
 
