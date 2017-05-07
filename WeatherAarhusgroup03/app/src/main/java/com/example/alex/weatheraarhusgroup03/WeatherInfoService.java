@@ -3,6 +3,7 @@ package com.example.alex.weatheraarhusgroup03;
 import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -16,6 +17,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 
 public class WeatherInfoService extends Service {
 
@@ -42,9 +45,9 @@ public class WeatherInfoService extends Service {
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId){
+    public int onStartCommand(Intent intent, int flags, int startId) {
         //in this case we only start the background running loop once
-        if(!started && intent!=null) {
+        if (!started && intent != null) {
             Log.d(LOG, "Background service onStartCommand");
             started = true;
             getWeatherInfoByInterval(UPDATE_INTERVAL);
@@ -55,13 +58,6 @@ public class WeatherInfoService extends Service {
         return START_STICKY;
         //return super.onStartCommand(intent, flags, startId);
     }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        //this service is not for binding: return null.
-        return null;
-    }
-
 
     //Helper method for readability and not editing borrowed method.
     private String getWeatherInfo() {
@@ -82,8 +78,8 @@ public class WeatherInfoService extends Service {
                 String s = "Background job";
                 try {
                     Log.d(LOG, "Task started");
-                    result = getWeatherInfo();
-                    Log.d(LOG, "Retrieved weather data: " + result);
+                    //result = getWeatherInfo();
+                    Log.d(LOG, "Retrieved weather data: ");
                     Thread.sleep(interval);
                     Log.d(LOG, "Task completed");
                 } catch (Exception e) {
@@ -114,5 +110,84 @@ public class WeatherInfoService extends Service {
         started = false;
         Log.d(LOG,"Background service destroyed");
         super.onDestroy();
+    }
+
+    // Interface.
+
+    public WeatherInfo getCurrentWeather() {
+        return createHistoricTestInfo().get(0);
+    }
+
+    ArrayList<WeatherInfo> getPastWeather() {
+        return createHistoricTestInfo();
+    }
+
+    // Binding.
+
+    private final IBinder weatherInfoServiceBinder = new WeatherInfoServiceBinder();
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return weatherInfoServiceBinder;
+    }
+
+    public class WeatherInfoServiceBinder extends Binder {
+
+        WeatherInfoService getService() {
+            return WeatherInfoService.this;
+        }
+    }
+
+    // Test data.
+
+    private ArrayList<WeatherInfo> createHistoricTestInfo() {
+
+        // Initialize the list of historic weather info with adapter.
+        ArrayList<WeatherInfo> testWeatherInfo = new ArrayList<WeatherInfo>();
+
+        WeatherInfo w1 = new WeatherInfo();
+        w1.id = 1;
+        w1.temperature = 24.7;
+        w1.weatherDescription = "Cloudy";
+        w1.timestamp = new Timestamp(System.currentTimeMillis());
+
+        WeatherInfo w2 = new WeatherInfo();
+        w2.id = 2;
+        w2.temperature = 25.1;
+        w2.weatherDescription = "Cloudy";
+        w2.timestamp = new Timestamp(System.currentTimeMillis());
+
+        WeatherInfo w3 = new WeatherInfo();
+        w3.id = 3;
+        w3.temperature = 28.7;
+        w3.weatherDescription = "Sunny";
+        w3.timestamp = new Timestamp(System.currentTimeMillis());
+
+        WeatherInfo w4 = new WeatherInfo();
+        w4.id = 4;
+        w4.temperature = 29.1;
+        w4.weatherDescription = "Sunny";
+        w4.timestamp = new Timestamp(System.currentTimeMillis());
+
+        WeatherInfo w5 = new WeatherInfo();
+        w5.id = 1;
+        w5.temperature = 30.4;
+        w5.weatherDescription = "Sunny";
+        w5.timestamp = new Timestamp(System.currentTimeMillis());
+
+        WeatherInfo w6 = new WeatherInfo();
+        w6.id = 1;
+        w6.temperature = 28.7;
+        w6.weatherDescription = "Sunny with rain";
+        w6.timestamp = new Timestamp(System.currentTimeMillis());
+
+        testWeatherInfo.add(w1);
+        testWeatherInfo.add(w2);
+        testWeatherInfo.add(w3);
+        testWeatherInfo.add(w4);
+        testWeatherInfo.add(w5);
+        testWeatherInfo.add(w6);
+
+        return testWeatherInfo;
     }
 }
