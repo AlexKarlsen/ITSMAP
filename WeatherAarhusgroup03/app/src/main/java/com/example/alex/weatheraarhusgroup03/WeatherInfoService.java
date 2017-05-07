@@ -6,6 +6,8 @@ import android.os.AsyncTask;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.example.alex.weatheraarhusgroup03.Helpers.UrlHelper;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,7 +20,6 @@ import java.net.URL;
 public class WeatherInfoService extends Service {
 
     //Logging keys
-    public static final String CONNECT = "CONNECTIVITY";
     private static final String LOG = "WeatherInfoService";
 
     //Weather Api keys
@@ -61,89 +62,13 @@ public class WeatherInfoService extends Service {
         return null;
     }
 
-    //This function is borrowed from Leafcastle's WeatherServiceDemo
-    //It takes a URL and sets up a HTTP connection and returns Api content as a string on success
-    private String callURL(String callUrl) {
-
-        InputStream is = null;
-
-        try {
-            //create URL
-            URL url = new URL(callUrl);
-
-            //configure HttpURLConnetion object
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
-            //we could use HttpsURLConnection, weather API does not support SSL on free version
-            //HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-
-            conn.setReadTimeout(10000 /* milliseconds */);
-            conn.setConnectTimeout(15000 /* milliseconds */);
-            conn.setRequestMethod("GET");
-            conn.setDoInput(true);
-
-
-
-            // Starts the request
-            conn.connect();
-            int response = conn.getResponseCode();
-
-            //probably check check on response code here!
-
-            //give user feedback in case of error
-
-            Log.d(CONNECT, "The response is: " + response);
-            is = conn.getInputStream();
-
-            // Convert the InputStream into a string
-
-            String contentAsString = convertStreamToStringBuffered(is);
-            return contentAsString;
-
-
-        } catch (ProtocolException pe) {
-            Log.d(CONNECT, "oh noes....ProtocolException");
-        } catch (UnsupportedEncodingException uee) {
-            Log.d(CONNECT, "oh noes....UnsuportedEncodingException");
-        } catch (IOException ioe) {
-            Log.d(CONNECT, "oh noes....IOException");
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException ioe) {
-                    Log.d(CONNECT, "oh noes....could not close stream, IOException");
-                }
-            }
-        }
-        return null;
-    }
-
-    //This function is borrowed from Leafcastle's WeatherServiceDemo
-    private String convertStreamToStringBuffered(InputStream is) {
-        String s = "";
-        String line = "";
-
-        BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-
-
-        try {
-            while ((line = rd.readLine()) != null) { s += line; }
-        } catch (IOException ex) {
-            Log.e(CONNECT, "ERROR reading HTTP response", ex);
-            //ex.printStackTrace();
-        }
-
-        // Return full string
-        return s;
-    }
 
     //Helper method for readability and not editing borrowed method.
-    private void getWeatherInfo() {
-        callURL(API_CALL);
+    private String getWeatherInfo() {
+        return UrlHelper.callURL(API_CALL);
     }
 
-    //The function gets the weather information by a given interval
+    //The function starts a task that gets the weather information by a given interval. The task recursively calls itself by the interval.
     private void getWeatherInfoByInterval(final long interval) {
 
         AsyncTask<Object, Object, String> task = new AsyncTask<Object, Object, String>(){
@@ -153,10 +78,12 @@ public class WeatherInfoService extends Service {
 
             @Override
             protected String doInBackground(Object[] params){
+                String result;
                 String s = "Background job";
                 try {
                     Log.d(LOG, "Task started");
-                    getWeatherInfo();
+                    result = getWeatherInfo();
+                    Log.d(LOG, "Retrieved weather data: " + result);
                     Thread.sleep(interval);
                     Log.d(LOG, "Task completed");
                 } catch (Exception e) {
