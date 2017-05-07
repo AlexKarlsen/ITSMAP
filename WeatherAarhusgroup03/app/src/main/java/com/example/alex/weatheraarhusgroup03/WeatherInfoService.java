@@ -43,7 +43,7 @@ public class WeatherInfoService extends Service {
     public static final String API_CALL = "http://api.openweathermap.org/data/2.5/weather?q=" + CITY_NAME + "&appid=" + API_KEY;
 
     //Service configuration
-    private static final long UPDATE_INTERVAL = 1800000;
+    private static final long UPDATE_INTERVAL = 10000; // 1800000 = 30 min.
     private boolean started = false;
 
 
@@ -65,7 +65,6 @@ public class WeatherInfoService extends Service {
             getWeatherInfoByInterval(UPDATE_INTERVAL);
         } else {
             Log.d(LOG, "Background service onStartCommand - already started. Get current weather info");
-            getWeatherInfo();
         }
         return START_STICKY;
         //return super.onStartCommand(intent, flags, startId);
