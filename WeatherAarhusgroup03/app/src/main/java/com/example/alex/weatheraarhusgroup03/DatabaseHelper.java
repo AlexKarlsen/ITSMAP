@@ -9,7 +9,6 @@ import android.util.Log;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -80,7 +79,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         return (int) newRowId;
     }
 
-    public List<WeatherInfo> getAllWeatherInfo() {
+    public ArrayList<WeatherInfo> getAllWeatherInfo() {
         String selectQuery = "SELECT  * FROM " + WeatherInfoTableContract.WeatherInfoTable.TABLE_NAME;
 
         Log.e(LOG, selectQuery);
@@ -88,36 +87,36 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
-        List<WeatherInfo> infos = getWeatherInfoFromCursor(cursor);
+        ArrayList<WeatherInfo> infos = getWeatherInfoFromCursor(cursor);
 
         return infos;
     }
 
-    public List<WeatherInfo> get24HoursWeatherInfo()
+    public ArrayList<WeatherInfo> get24HoursWeatherInfo()
     {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Long timestamp24HoursAgoMillis = (System.currentTimeMillis()) - TimeUnit.HOURS.toMillis(24);
 
         String selectQuery = "SELECT  * FROM " + WeatherInfoTableContract.WeatherInfoTable.TABLE_NAME + " WHERE "
-                + WeatherInfoTableContract.WeatherInfoTable.COLUMN_TIMESTAMP + " > " + timestamp24HoursAgoMillis;
+                + WeatherInfoTableContract.WeatherInfoTable.COLUMN_TIMESTAMP + " > " + timestamp24HoursAgoMillis + " ORDER BY " + WeatherInfoTableContract.WeatherInfoTable.COLUMN_TIMESTAMP + " DESC" ;
 
         Log.e(LOG, selectQuery);
 
         Cursor cursor = db.rawQuery(selectQuery, null);
 
-        List<WeatherInfo> infos = getWeatherInfoFromCursor(cursor);
+        ArrayList<WeatherInfo> infos = getWeatherInfoFromCursor(cursor);
 
         return infos;
     }
 
     // Helper function which retrieves a list of WeatherInfo from a Cursor
-    private List<WeatherInfo> getWeatherInfoFromCursor(Cursor cursor)
+    private ArrayList<WeatherInfo> getWeatherInfoFromCursor(Cursor cursor)
     {
         if (cursor == null || cursor.getCount() == 0)
             return null;
 
-        List<WeatherInfo> infos = new ArrayList<WeatherInfo>();
+        ArrayList<WeatherInfo> infos = new ArrayList<WeatherInfo>();
 
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {

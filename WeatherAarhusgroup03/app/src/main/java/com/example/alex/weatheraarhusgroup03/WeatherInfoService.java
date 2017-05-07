@@ -33,9 +33,10 @@ public class WeatherInfoService extends Service {
     public static final String API_CALL = "http://api.openweathermap.org/data/2.5/weather?q=" + CITY_NAME + "&appid=" + API_KEY;
 
     //Service configuration
-    private static final long UPDATE_INTERVAL = 10000; // 1800000 = 30 min.
+    private static final long UPDATE_INTERVAL = 1800000; // 30 min.
     private boolean started = false;
 
+    private static DatabaseHelper dbHelper;
 
     public WeatherInfoService() {
     }
@@ -44,6 +45,7 @@ public class WeatherInfoService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.d(LOG, "Background service onCreate");
+        dbHelper = new DatabaseHelper(this);
     }
 
     @Override
@@ -113,11 +115,11 @@ public class WeatherInfoService extends Service {
     }
 
 
-    private void broadcastTaskResult(String result, Boolean success){
+    private void broadcastTaskResult(Boolean success){
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(BROADCAST_BACKGROUND_SERVICE_RESULT);
         broadcastIntent.putExtra(EXTRA_STATUS, success);
-        Log.d(LOG, "Broadcasting: " + result);
+        Log.d(LOG, "Broadcast sent");
         LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
     }
 
@@ -133,18 +135,19 @@ public class WeatherInfoService extends Service {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        String result;
-                        //Interpret JSON response as string
-                        result = interpretWeatherJSON(response);
-                        Log.d(LOG, "Retrieved weather data: " + result);
+                        //
+                        WeatherInfo weatherinfo = interpretWeatherJSON(response);
+
+                        //Write to database
+                        dbHelper.insertWeatherInfo(weatherinfo);
 
                         //Broadcast result
-                        broadcastTaskResult(result, true);
+                        broadcastTaskResult(true);
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                broadcastTaskResult(error.getLocalizedMessage(),false);
+                broadcastTaskResult(false);
             }
         });
 
@@ -153,7 +156,7 @@ public class WeatherInfoService extends Service {
     }
 
     //attempt to decode the json response from weather server
-    public String interpretWeatherJSON(String jsonResponse){
+    public WeatherInfo interpretWeatherJSON(String jsonResponse){
 
         return WeatherJsonParser.parseCityWeatherJson(jsonResponse);
 	}	
@@ -165,7 +168,7 @@ public class WeatherInfoService extends Service {
     }
 
     ArrayList<WeatherInfo> getPastWeather() {
-        return createHistoricTestInfo();
+        return dbHelper.get24HoursWeatherInfo();
     }
 
     // Binding.
