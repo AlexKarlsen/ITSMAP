@@ -18,10 +18,12 @@ import java.util.ArrayList;
 public class WeatherInfoArrayAdapter extends ArrayAdapter<WeatherInfo> {
 
     private ArrayList<WeatherInfo> objects;
+    private int cellResourceId;
 
-    public WeatherInfoArrayAdapter(Context context, int textViewResourceId, ArrayList<WeatherInfo> objects) {
-        super(context, textViewResourceId, objects);
+    public WeatherInfoArrayAdapter(Context context, int cellResourceId, ArrayList<WeatherInfo> objects) {
+        super(context, cellResourceId, objects);
         this.objects = objects;
+        this.cellResourceId = cellResourceId;
     }
 
     // Modified from https://devtut.wordpress.com/2011/06/09/custom-arrayadapter-for-a-listview-android/
@@ -36,7 +38,7 @@ public class WeatherInfoArrayAdapter extends ArrayAdapter<WeatherInfo> {
         // Inflate the view if it is null.
         if (weatherInfoView == null) {
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            weatherInfoView = inflater.inflate(R.layout.weather_info_list_item, null);
+            weatherInfoView = inflater.inflate(cellResourceId, null);
         }
 
         // Update the weatherInfoView with the weather info.
@@ -48,11 +50,17 @@ public class WeatherInfoArrayAdapter extends ArrayAdapter<WeatherInfo> {
             TextView timeTextView = (TextView) weatherInfoView.findViewById(R.id.timeTextView);
 
             // Set the text of the text views to display the weather info data.
-            descriptionTextView.setText(info.weatherDescription);
-            temperatureTextView.setText(String.format("%.2f °C", info.temperature));
-            timeTextView.setText(info.timestamp.toString());
+            if (descriptionTextView != null) {
+                descriptionTextView.setText(info.weatherDescription);
+            }
+            if (temperatureTextView != null) {
+                temperatureTextView.setText(String.format("%.1f°C", info.temperature));
+            }
+            if (timeTextView != null) {
+                timeTextView.setText(info.timestamp.toString());
+            }
         }
 
-        return convertView;
+        return weatherInfoView;
     }
 }
