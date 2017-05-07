@@ -6,6 +6,18 @@
     android:layout_height="match_parent"
     tools:context="com.example.alex.weatheraarhusgroup03.MainActivity">
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/refreshFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        android:clickable="true"
+        app:fabSize="mini"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:srcCompat="@android:drawable/stat_notify_sync" />
+
     <LinearLayout
         android:id="@+id/mainLinearLayout"
         android:layout_width="0dp"
@@ -29,7 +41,7 @@
                 android:id="@+id/currentTitleTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Current Weather"
+                android:text="@string/title_current"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -88,7 +100,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="8dp"
-                android:text="Last 24 Hours"
+                android:text="@string/title_historic"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 

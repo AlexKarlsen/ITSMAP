@@ -1,17 +1,15 @@
 package com.example.alex.weatheraarhusgroup03;
 
-import android.content.Context;
 import android.content.res.Configuration;
-import android.graphics.Color;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -23,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     TextView currentDescriptionTextView;
     FrameLayout currentColorFrameLayout;
     ListView historicWeatherInfoListView;
+    FloatingActionButton refreshFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,11 +44,21 @@ public class MainActivity extends AppCompatActivity {
         currentDescriptionTextView = (TextView) findViewById(R.id.currentDescriptionTextView);
         currentColorFrameLayout = (FrameLayout) findViewById(R.id.colorFrameLayout);
         historicWeatherInfoListView = (ListView) findViewById(R.id.historicWeatherInfoListView);
+        refreshFab = (FloatingActionButton) findViewById(R.id.refreshFab);
 
         // Update the historic list view with the latest 24 hr weather info.
         ArrayList<WeatherInfo> historicWeatherInfo = createHistoricTestInfo();
         updateHistoricListView(historicWeatherInfo);
         updateCurrentView(historicWeatherInfo.get(0));
+
+        // Add on click handler to the refresh fab.
+        refreshFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                // Call the service...
+            }
+        });
     }
 
     private void updateHistoricListView(ArrayList<WeatherInfo> historicData) {

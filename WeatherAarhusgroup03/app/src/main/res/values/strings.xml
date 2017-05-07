@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Weather Aarhus group 03</string>
+    <string name="title_current">Current weather</string>
+    <string name="title_historic">Last 24 hours</string>
 </resources>
