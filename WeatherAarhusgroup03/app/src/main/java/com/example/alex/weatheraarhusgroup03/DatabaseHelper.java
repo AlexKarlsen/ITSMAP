@@ -47,7 +47,6 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         onUpgrade(db, oldVersion, newVersion);
     }
 
-
     private static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + WeatherInfoTableContract.WeatherInfoTable.TABLE_NAME + " (" +
                     WeatherInfoTableContract.WeatherInfoTable._ID + " INTEGER PRIMARY KEY," +
@@ -57,7 +56,6 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
     private static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + WeatherInfoTableContract.WeatherInfoTable.TABLE_NAME;
-
 
 
     public int insertWeatherInfo(WeatherInfo weatherInfo)
@@ -108,6 +106,21 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         ArrayList<WeatherInfo> infos = getWeatherInfoFromCursor(cursor);
 
         return infos;
+    }
+
+    public WeatherInfo getLatestWeatherInfo()
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String selectQuery = "SELECT  * FROM " + WeatherInfoTableContract.WeatherInfoTable.TABLE_NAME + " ORDER BY " + WeatherInfoTableContract.WeatherInfoTable.COLUMN_TIMESTAMP + " DESC LIMIT 1";
+        Log.e(LOG, selectQuery);
+
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        ArrayList<WeatherInfo> infos = getWeatherInfoFromCursor(cursor);
+        WeatherInfo weatherInfo = infos.get(0);
+
+        return weatherInfo;
     }
 
     // Helper function which retrieves a list of WeatherInfo from a Cursor

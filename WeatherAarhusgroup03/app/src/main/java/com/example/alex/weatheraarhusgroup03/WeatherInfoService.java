@@ -39,7 +39,7 @@ public class WeatherInfoService extends Service {
     public static final String API_CALL = "http://api.openweathermap.org/data/2.5/weather?q=" + CITY_NAME + "&appid=" + API_KEY;
 
     //Service configuration
-    private static final long UPDATE_INTERVAL = 1800000; // 30 min.
+    private static final long UPDATE_INTERVAL = 10000; // 1800000 = 30 min.
     private boolean started = false;
 
     //Database helper
@@ -162,7 +162,8 @@ public class WeatherInfoService extends Service {
     public WeatherInfo interpretWeatherJSON(String jsonResponse){ return WeatherJsonParser.parseCityWeatherJson(jsonResponse); }
 
     //Required functions to call from activity
-	//public WeatherInfo getCurrentWeather() { return createHistoricTestInfo().get(0);}
+	public WeatherInfo getCurrentWeather() { return dbHelper.getLatestWeatherInfo();}
+
     ArrayList<WeatherInfo> getPastWeather() {
         return dbHelper.get24HoursWeatherInfo();
     }

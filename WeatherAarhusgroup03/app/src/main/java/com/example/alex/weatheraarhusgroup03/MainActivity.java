@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         // Start background service with intent
         Intent backgroundServiceIntent = new Intent(this, WeatherInfoService.class);
         startService(backgroundServiceIntent);
-        bindService(backgroundServiceIntent, connection, Context.BIND_AUTO_CREATE);
+        bindService(backgroundServiceIntent, connection, Context.BIND_IMPORTANT);
     }
 
     @Override
