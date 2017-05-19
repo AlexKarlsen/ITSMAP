@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Pub Golf</string>
+    <string name="facebook_app_id">596137890564752</string>
+    <string name="fb_login_protocol_scheme">fb596137890564752</string>
 </resources>
