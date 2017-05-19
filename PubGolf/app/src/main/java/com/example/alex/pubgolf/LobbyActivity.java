@@ -1,5 +1,6 @@
 package com.example.alex.pubgolf;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -18,7 +19,9 @@ public class LobbyActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                // Create intent for host game activity...
+                // Create intent for host game activity.
+                Intent hostGameIntent = new Intent(LobbyActivity.this, HostGameActivity.class);
+                startActivity(hostGameIntent);
             }
         });
 
@@ -28,7 +31,7 @@ public class LobbyActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                // Create intent for join game activity...
+                // Create intent for join game activity.
             }
         });
     }
