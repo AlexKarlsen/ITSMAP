@@ -12,13 +12,13 @@ public class LobbyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lobby);
 
-        // Initialize the create game button.
-        Button createGameButton = (Button) findViewById(R.id.createGameButton);
-        createGameButton.setOnClickListener( new View.OnClickListener() {
+        // Initialize the host game button.
+        Button hostGameButton = (Button) findViewById(R.id.hostGameButton);
+        hostGameButton.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                // Create intent for create game activity...
+                // Create intent for host game activity...
             }
         });
 
