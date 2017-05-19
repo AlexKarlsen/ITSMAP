@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "56764562443",
+    "firebase_url": "https://pubgolf-8ea9d.firebaseio.com",
+    "project_id": "pubgolf-8ea9d",
+    "storage_bucket": "pubgolf-8ea9d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:56764562443:android:249c3f839a5e37ba",
+        "android_client_info": {
+          "package_name": "com.example.alex.pubgolf"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "56764562443-r4adau273rok2j3vj4s17q54rbaktcgr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBIVyb5Awp2KmlsQGGhdRDTDI8i3xMcbaI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
