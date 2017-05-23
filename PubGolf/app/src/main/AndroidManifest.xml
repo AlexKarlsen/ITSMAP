@@ -56,7 +56,7 @@
         </activity>
 
         <activity android:name=".LobbyActivity" />
-        <activity android:name=".HostGameActivity" />
+        <activity android:name=".EditGameActivity" />
 	<activity android:name=".EditCourseActivity"></activity>
 
         <meta-data
