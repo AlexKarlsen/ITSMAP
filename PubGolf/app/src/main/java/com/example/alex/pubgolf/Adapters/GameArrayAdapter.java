@@ -69,7 +69,7 @@ public class GameArrayAdapter extends ArrayAdapter {
             if (info.State == Game.GameState.InProgress) {
                 titleTextView.setTypeface(null, Typeface.BOLD);
                 timeTextView.setTypeface(null, Typeface.BOLD);
-                outerLinearLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
+                outerLinearLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorHighlight));
             }
             // Write "Hosting" in hostingTextView if user is host
             if (info.Owner == null) // if host

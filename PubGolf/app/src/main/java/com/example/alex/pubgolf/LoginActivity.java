@@ -4,6 +4,7 @@ package com.example.alex.pubgolf;
  * Created by: Alex Justesen Karlsen, 19/5/2017
  * **/
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -81,8 +82,6 @@ public class LoginActivity extends AppCompatActivity {
         };
     }
 
-
-
     @Override
     public void onStart() {
         super.onStart();
@@ -96,23 +95,28 @@ public class LoginActivity extends AppCompatActivity {
         Log.d(TAG, "handleFacebookAccessToken:" + token);
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+
+        mAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+
                         if (task.isSuccessful()) {
+
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            // updateUI(user);
+
+                            // Create intent for game list activity.
+                            Context context = getApplicationContext();
+                            Intent gameListIntent = new Intent(context, GameListActivity.class);
+                            startActivity(gameListIntent);
+
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             //Toast.makeText(FacebookLoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                             // updateUI(null);
                         }
-
-                        // ...
                     }
                 });
     }
