@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".LoginActivity">
+        <activity android:name=".LobbyActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -37,10 +37,10 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".LobbyActivity" />
+        <activity android:name=".LoginActivity" />
         <activity android:name=".EditGameActivity" />
         <activity android:name=".EditCourseActivity" />
-        
+
         <service
             android:name=".GameService"
             android:enabled="true"

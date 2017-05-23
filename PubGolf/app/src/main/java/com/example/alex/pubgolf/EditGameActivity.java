@@ -25,12 +25,12 @@ public class EditGameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_game);
 
         // Initialize the subviews.
-        nameEditText = (EditText) findViewById(R.id.nameEditText);
-        descriptionEditText = (EditText) findViewById(R.id.descriptionEditText);
-        dateEditText = (EditText) findViewById(R.id.dateEditText);
+        nameEditText = (EditText) this.findViewById(R.id.nameEditText);
+        descriptionEditText = (EditText) this.findViewById(R.id.descriptionEditText);
+        dateEditText = (EditText) this.findViewById(R.id.dateEditText);
 
         // Initialize the host game button.
-        Button continueButton = (Button) findViewById(R.id.continueButton);
+        Button continueButton = (Button) this.findViewById(R.id.continueButton);
         continueButton.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -67,7 +67,8 @@ public class EditGameActivity extends AppCompatActivity {
         game.State = Game.GameState.Created;
 
         // Pass the game object on to the course edit activity.
-        Intent editCourseIntent = new Intent(EditGameActivity.this, EditCourseActivity.class);
+        Context context = getApplicationContext();
+        Intent editCourseIntent = new Intent(context, EditCourseActivity.class);
         editCourseIntent.putExtra(EXTRA_GAME, game);
         startActivity(editCourseIntent);
     }
