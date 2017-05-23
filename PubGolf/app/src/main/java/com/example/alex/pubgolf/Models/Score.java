@@ -7,4 +7,6 @@ package com.example.alex.pubgolf.Models;
 public class Score {
     public String User; // Type?
     public Long value;
+
+    public Score() {}
 }
