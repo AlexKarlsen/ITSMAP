@@ -36,7 +36,6 @@
         <activity android:name=".LobbyActivity" />
         <activity android:name=".EditCourseActivity" />
         <activity android:name=".EditGameActivity" />
-        
         <service
             android:name=".GameService"
             android:enabled="true"
