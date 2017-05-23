@@ -10,8 +10,8 @@ import android.widget.EditText;
 public class HostGameActivity extends AppCompatActivity {
 
     EditText nameEditText;
+    EditText descriptionEditText;
     EditText dateEditText;
-    EditText capacityEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,8 +20,8 @@ public class HostGameActivity extends AppCompatActivity {
 
         // Initialize the subviews.
         nameEditText = (EditText) findViewById(R.id.nameEditText);
+        descriptionEditText = (EditText) findViewById(R.id.descriptionEditText);
         dateEditText = (EditText) findViewById(R.id.dateEditText);
-        capacityEditText = (EditText) findViewById(R.id.capacityEditText);
 
         // Initialize the host game button.
         Button continueButton = (Button) findViewById(R.id.continueButton);
@@ -36,7 +36,7 @@ public class HostGameActivity extends AppCompatActivity {
     void onContinueClicked() {
 
         String name = nameEditText.getText().toString();
+        String description = descriptionEditText.getText().toString();
         String date = dateEditText.getText().toString();
-        String capacity = capacityEditText.getText().toString();
     }
 }
