@@ -1,5 +1,9 @@
 package com.example.alex.pubgolf;
 
+/**
+ * Created by: Alex Justesen Karlsen, 19/5/2017
+ * **/
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -21,6 +25,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
+
+    // https://firebase.google.com/docs/auth/android/facebook-login
+    // https://developers.facebook.com/docs/facebook-login/android
 
     CallbackManager callbackManager;
     LoginButton loginButton;
