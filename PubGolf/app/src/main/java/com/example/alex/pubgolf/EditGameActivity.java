@@ -20,7 +20,7 @@ public class EditGameActivity extends AppCompatActivity {
 
     public static final String EXTRA_GAME = "EXTRA_GAME";
 
-    EditText nameEditText;
+    EditText titleEditText;
     EditText descriptionEditText;
     EditText dateEditText;
 
@@ -30,7 +30,7 @@ public class EditGameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_game);
 
         // Initialize the subviews.
-        nameEditText = (EditText) this.findViewById(R.id.nameEditText);
+        titleEditText = (EditText) this.findViewById(R.id.titleEditText);
         descriptionEditText = (EditText) this.findViewById(R.id.descriptionEditText);
         dateEditText = (EditText) this.findViewById(R.id.dateEditText);
         setupDateEditText();
@@ -112,13 +112,13 @@ public class EditGameActivity extends AppCompatActivity {
         }
 
         // Get the values input by the user.
-        String name = nameEditText.getText().toString();
+        String title = titleEditText.getText().toString();
         String description = descriptionEditText.getText().toString();
         String date = dateEditText.getText().toString();
 
         // Create the new game object.
         Game game = new Game();
-        game.Title = name;
+        game.Title = title;
         game.Description = description;
         game.StartTime = (long) 0; // Get the actual time instead.
         game.HoleIndex = (long) 0;
