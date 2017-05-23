@@ -20,7 +20,7 @@ public class LobbyActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 // Create intent for host game activity.
-                Intent hostGameIntent = new Intent(LobbyActivity.this, HostGameActivity.class);
+                Intent hostGameIntent = new Intent(LobbyActivity.this, EditGameActivity.class);
                 startActivity(hostGameIntent);
             }
         });

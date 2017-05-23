@@ -51,10 +51,10 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".LobbyActivity" />
-        <activity android:name=".HostGameActivity" />
 
-	<activity android:name=".EditCourseActivity"></activity>
+        <activity android:name=".LobbyActivity" />
+        <activity android:name=".EditGameActivity" />
+	<activity android:name=".EditCourseActivity" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -64,9 +64,10 @@
             android:name=".GameService"
             android:enabled="true"
             android:exported="true"></service>
-        
+
         <meta-data android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id"/>
+            
     </application>
 
 </manifest>
