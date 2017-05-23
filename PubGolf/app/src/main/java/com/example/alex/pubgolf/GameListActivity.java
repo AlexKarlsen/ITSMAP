@@ -1,7 +1,9 @@
 package com.example.alex.pubgolf;
 
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ListView;
 
 import com.example.alex.pubgolf.Adapters.GameArrayAdapter;
@@ -15,7 +17,7 @@ public class GameListActivity extends AppCompatActivity {
 
     // Views
     ListView gameListView;
-    //FloatingActionButton refreshFab;
+    FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +30,16 @@ public class GameListActivity extends AppCompatActivity {
     public void initializeSubviews()
     {
         gameListView = (ListView) findViewById(R.id.gamesListView);
-
+        fab = (FloatingActionButton) findViewById(R.id.floatingActionButton);
         updateGamesListView(makeTestData());
+
+        // Add on click handler to the fab.
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //
+            }
+        });
     }
 
     private void updateGamesListView(ArrayList<Game> gamesData) {
@@ -46,7 +56,7 @@ public class GameListActivity extends AppCompatActivity {
         ArrayList<Game> games = new ArrayList<Game>();
 
         Game game1 = new Game();
-        game1.Owner = "Emil";
+        game1.Owner = "Emil";   // ??
         game1.Title = "PGÅ 2017";
         game1.StartTime = System.currentTimeMillis();
         game1.State = Game.GameState.InProgress;
