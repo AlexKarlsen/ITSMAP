@@ -13,10 +13,8 @@ import android.widget.Toast;
 
 import com.example.alex.pubgolf.Models.Game;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.Date;
 
 public class EditGameActivity extends AppCompatActivity {
 
