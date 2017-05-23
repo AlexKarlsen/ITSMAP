@@ -8,8 +8,8 @@
 
     <ListView
         android:id="@+id/gamesListView"
-        android:layout_width="365dp"
-        android:layout_height="482dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"

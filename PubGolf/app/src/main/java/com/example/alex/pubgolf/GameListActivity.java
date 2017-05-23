@@ -7,6 +7,7 @@ import android.widget.ListView;
 import com.example.alex.pubgolf.Adapters.GameArrayAdapter;
 import com.example.alex.pubgolf.Models.Game;
 
+import java.security.Timestamp;
 import java.security.acl.Owner;
 import java.util.ArrayList;
 
@@ -47,13 +48,13 @@ public class GameListActivity extends AppCompatActivity {
         Game game1 = new Game();
         game1.Owner = "Emil";
         game1.Title = "PGÅ 2017";
-        game1.StartTime = (long)123451232;
+        game1.StartTime = System.currentTimeMillis();
         game1.State = Game.GameState.InProgress;
 
         Game game2 = new Game();
         game2.Owner = "Alex";
         game2.Title = "PGÅ 2018";
-        game2.StartTime = (long)123457232;
+        game2.StartTime = (long)1495537461;
         game2.State = Game.GameState.Created;
 
         games.add(game1);

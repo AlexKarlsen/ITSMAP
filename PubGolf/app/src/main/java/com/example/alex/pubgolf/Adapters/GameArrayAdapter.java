@@ -5,10 +5,13 @@ import com.example.alex.pubgolf.R;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -53,6 +56,7 @@ public class GameArrayAdapter extends ArrayAdapter {
             TextView titleTextView = (TextView) gameView.findViewById(R.id.titleTextView);
             TextView timeTextView = (TextView) gameView.findViewById(R.id.startTimeTextView);
             TextView hostingTextView = (TextView) gameView.findViewById(R.id.hostingTextView);
+            LinearLayout outerLinearLayout = (LinearLayout) gameView.findViewById(R.id.outerLinearLayout);
 
             // Set the text of the text views to display the weather info data.
             if (titleTextView != null) {
@@ -65,14 +69,13 @@ public class GameArrayAdapter extends ArrayAdapter {
             if (info.State == Game.GameState.InProgress) {
                 titleTextView.setTypeface(null, Typeface.BOLD);
                 timeTextView.setTypeface(null, Typeface.BOLD);
-            }
-            else {  // Might not be necessary
-                titleTextView.setTypeface(null, Typeface.NORMAL);
-                timeTextView.setTypeface(null, Typeface.NORMAL);
+                outerLinearLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
             }
             // Write "Hosting" in hostingTextView if user is host
             if (info.Owner == null) // if host
                 hostingTextView.setText("Hosting");
+            else
+                hostingTextView.setText("");
         }
 
         return gameView;
