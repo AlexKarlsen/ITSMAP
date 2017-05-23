@@ -1,7 +1,6 @@
 package com.example.alex.pubgolf.Models;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * Created by Emil- on 23/05/2017.
@@ -9,6 +8,7 @@ import java.util.Date;
 
 public class Game implements Serializable {
 
+    public String Key;      // Database key
     public String Owner;    // Type?
     public String Title;
     public String Description;

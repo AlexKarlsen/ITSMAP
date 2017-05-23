@@ -15,8 +15,10 @@ public class FireBaseHelper {
         mDatabase = FirebaseDatabase.getInstance().getReference();
     }
 
-    public void addNewGame(String gameId, Game game)
+    public void addNewGame(Game game)
     {
-        mDatabase.child("Games").child(gameId).setValue(game);
+
     }
+
+
 }

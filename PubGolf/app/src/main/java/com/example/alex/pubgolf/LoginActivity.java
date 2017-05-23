@@ -1,8 +1,8 @@
 package com.example.alex.pubgolf;
 
 /**
- * Created by: Alex Justesen Karlsen, 19/5/2017
- * **/
+ * Created by Alex on 19/05/2017.
+ */
 
 import android.content.Intent;
 import android.os.Bundle;
