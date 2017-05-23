@@ -1,5 +1,7 @@
 package com.example.alex.pubgolf;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -37,7 +39,11 @@ public class GameListActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //
+
+                // Create intent for game list activity.
+                Context context = getApplicationContext();
+                Intent lobbyIntent = new Intent(context, LobbyActivity.class);
+                startActivity(lobbyIntent);
             }
         });
     }
