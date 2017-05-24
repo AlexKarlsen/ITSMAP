@@ -15,11 +15,11 @@ import android.widget.ListView;
 import com.example.alex.pubgolf.Adapters.GameArrayAdapter;
 import com.example.alex.pubgolf.Models.Game;
 
-import java.security.Timestamp;
-import java.security.acl.Owner;
 import java.util.ArrayList;
 
 public class GameListActivity extends AppCompatActivity {
+
+    ArrayList<Game> gamesList = new ArrayList<Game>();
 
     // Views
     ListView gameListView;
@@ -29,6 +29,10 @@ public class GameListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_list);
+
+        Intent gameServiceIntent = new Intent(this, GameService.class);
+        startService(gameServiceIntent);
+        //bindService(gameServiceIntent, connection, Context.BIND_IMPORTANT);
 
         initializeSubviews();
     }
@@ -113,12 +117,12 @@ public class GameListActivity extends AppCompatActivity {
 
             // Check if the service was successful.
             String description = intent.getStringExtra(GameService.EXTRA_DESCRIPTION);
+            Game game = (Game)intent.getSerializableExtra(GameService.EXTRA_GAME);
             Log.d("Description", description);
 
             if (description == "New Game added") {
-
-                // Call the service.
-                //getDataFromServiceAndUpdateViews();
+                gamesList.add(game);
+                updateGamesListView(gamesList);
             } else {
 
                 // Display a toast.
