@@ -8,6 +8,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.example.alex.pubgolf.Models.Game;
@@ -26,7 +27,11 @@ public class GameService extends Service {
     private static final String LOG = "GameService";
 
     //Firebase URls
-    private static final String Games = "Games";
+    private static final String GAMES_LEVEL = "Games";
+
+    public static final String BROADCAST_GAME_SERVICE_RESULT = "BROADCAST_GAME_SERVICE_RESULT";
+
+    private boolean started = false;
 
     private DatabaseReference mDatabase;
 
@@ -37,60 +42,91 @@ public class GameService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.d(LOG, "Background service onCreate");
+
+        // Get a reference to Firebase Real-time database at root-level
         mDatabase = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(LOG, "Background service onStartCommand");
-        mDatabase.child(Games).addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Game newGame = dataSnapshot.getValue(Game.class);
-                // Inform activity or list view
-            }
+        Log.d(LOG, "Game service onStartCommand");
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                Game changedGame = dataSnapshot.getValue(Game.class);
-                // Inform activity or list view
-            }
+        // Check if service is already started. If not start service and register Firebase listeners.
+        if(!started && intent != null){
+            Log.d(LOG, "Start Game service");
+            started = true;
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                Game removedGame = dataSnapshot.getValue(Game.class);
-                // Inform activity or list view
-            }
+            // Listen for changes at Games level in Firebase
+            mDatabase.child(GAMES_LEVEL).addChildEventListener(new ChildEventListener() {
 
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    Log.d(LOG, "Received new game");
+                    Game newGame = dataSnapshot.getValue(Game.class);
+                    // Inform activity or list view
+                    broadcastTaskResult("New Game added", newGame);
+                }
 
-            }
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                    Log.d(LOG, "Received changed game");
+                    Game changedGame = dataSnapshot.getValue(Game.class);
+                    // Inform activity or list view
+                    broadcastTaskResult("A Game is changed", changedGame);
+                }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    Log.d(LOG, "Received removed game");
+                    Game removedGame = dataSnapshot.getValue(Game.class);
+                    // Inform activity or list view
+                    broadcastTaskResult("A Game is removed", removedGame);
+                }
 
-            }
-        });
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+        else{
+            Log.d(LOG, "Game Service already started");
+        }
         return START_STICKY;
     }
 
     // Creates a new game and saves Firebase generated key to the locale instance of the game
     public void createNewGame(Game newGame){
-        DatabaseReference newGameRef = mDatabase.child(Games).push();
+        DatabaseReference newGameRef = mDatabase.child(GAMES_LEVEL).push();
         newGame.Key = newGameRef.getKey();
         newGameRef.setValue(newGame);
     }
 
+    // Update game title by passing game key and the new title
     public void updateGameTitle(String gameKey, String gameTitle){
         Map<String, Object> gameUpdates = new HashMap<String, Object>();
         gameUpdates.put(gameKey, gameTitle);
-        mDatabase.child(Games).updateChildren(gameUpdates);
+        mDatabase.child(GAMES_LEVEL).updateChildren(gameUpdates);
     }
 
+    // Remove game by key
     public void removeGame(String gameKey){
-        mDatabase.child(Games).child(gameKey).removeValue();
+        mDatabase.child(GAMES_LEVEL).child(gameKey).removeValue();
+    }
+
+    //Broadcasting events to the activity, activities need to bind to service and implement onRecieve()
+    private void broadcastTaskResult(String changedDescription, Game changedGame){
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction(BROADCAST_GAME_SERVICE_RESULT);
+        broadcastIntent.putExtra("Changed Description", changedDescription);
+        broadcastIntent.putExtra("Game", changedGame);
+        Log.d(LOG, "Broadcasting");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
     }
 
     // Binding to Service can be done from activity
