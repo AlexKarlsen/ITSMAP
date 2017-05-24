@@ -30,6 +30,8 @@ public class GameService extends Service {
     private static final String GAMES_LEVEL = "Games";
 
     public static final String BROADCAST_GAME_SERVICE_RESULT = "BROADCAST_GAME_SERVICE_RESULT";
+    public static final String EXTRA_DESCRIPTION = "EXTRA_DESCRIPTION";
+    public static final String EXTRA_GAME = "EXTRA_GAME";
 
     private boolean started = false;
 
@@ -123,8 +125,8 @@ public class GameService extends Service {
     private void broadcastTaskResult(String changedDescription, Game changedGame){
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(BROADCAST_GAME_SERVICE_RESULT);
-        broadcastIntent.putExtra("Changed Description", changedDescription);
-        broadcastIntent.putExtra("Game", changedGame);
+        broadcastIntent.putExtra(EXTRA_DESCRIPTION, changedDescription);
+        broadcastIntent.putExtra(EXTRA_GAME, changedGame);
         Log.d(LOG, "Broadcasting");
         LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
     }

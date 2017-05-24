@@ -1,10 +1,14 @@
 package com.example.alex.pubgolf;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
@@ -78,4 +82,48 @@ public class GameListActivity extends AppCompatActivity {
 
         return games;
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // Register broadcast receivers.
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(GameService.BROADCAST_GAME_SERVICE_RESULT);
+        LocalBroadcastManager.getInstance(this).registerReceiver(onGameServiceResult, filter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        // Unbind from the service;
+        //if (bound) {
+            //unbindService(connection);
+          //  bound = false;
+        //}
+
+        // Unregister broadcast receiver.
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onGameServiceResult);
+    }
+
+    private BroadcastReceiver onGameServiceResult = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            // Check if the service was successful.
+            String description = intent.getStringExtra(GameService.EXTRA_DESCRIPTION);
+            Log.d("Description", description);
+
+            if (description == "New Game added") {
+
+                // Call the service.
+                //getDataFromServiceAndUpdateViews();
+            } else {
+
+                // Display a toast.
+                //Toast.makeText(MainActivity.this, R.string.update_failed, Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
 }
