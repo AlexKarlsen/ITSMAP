@@ -30,7 +30,7 @@ public class EditGameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_game);
 
         // Initialize the subviews.
-        titleEditText = (EditText) this.findViewById(R.id.titleEditText);
+        titleEditText = (EditText) this.findViewById(R.id.titleEditText1);
         descriptionEditText = (EditText) this.findViewById(R.id.descriptionEditText);
         dateEditText = (EditText) this.findViewById(R.id.dateEditText);
         setupDateEditText();
