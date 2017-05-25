@@ -3,6 +3,7 @@ package com.example.alex.pubgolf.Models;
 import android.location.Address;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -16,7 +17,7 @@ public class Hole implements Serializable {
     public String Description;
     public long Index;  // Index representing the hole order in a Game.
 
-    public List<Score> Scores;
+    public HashMap<String, Score> Scores;
 
     public Hole() {}
 

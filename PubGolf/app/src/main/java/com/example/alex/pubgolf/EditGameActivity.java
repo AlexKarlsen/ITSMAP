@@ -18,6 +18,8 @@ import com.facebook.Profile;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.UUID;
 
 public class EditGameActivity extends AppCompatActivity {
 
@@ -130,6 +132,8 @@ public class EditGameActivity extends AppCompatActivity {
         // Create the new game object.
         Game game = new Game();
         game.Owner = new Player(Profile.getCurrentProfile().getId(), Profile.getCurrentProfile().getName());
+        game.Players = new HashMap<String, Player>();
+        game.Players.put(UUID.randomUUID().toString(), game.Owner);
         game.Title = title;
         game.Description = description;
         if (selectedTime != null) {

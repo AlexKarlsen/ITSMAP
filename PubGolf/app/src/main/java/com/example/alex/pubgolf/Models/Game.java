@@ -1,6 +1,7 @@
 package com.example.alex.pubgolf.Models;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -33,6 +34,6 @@ public class Game implements Serializable {
         Cancelled
     }
 
-    public List<Player> Players;
+    public HashMap<String, Player> Players;
     public List<Hole> Holes;
 }
