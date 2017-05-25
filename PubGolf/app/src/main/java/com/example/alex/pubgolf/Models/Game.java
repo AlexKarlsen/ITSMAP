@@ -10,7 +10,7 @@ import java.util.List;
 public class Game implements Serializable {
 
     public String Key;      // Database key
-    public String Owner;    // Type?
+    public Player Owner;    // Type?
     public String Title;
     public String Description;
     public Long StartTime;  // Date in millis. Optional

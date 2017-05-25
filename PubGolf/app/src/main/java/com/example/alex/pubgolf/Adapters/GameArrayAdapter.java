@@ -1,18 +1,18 @@
 package com.example.alex.pubgolf.Adapters;
 
-import com.example.alex.pubgolf.Models.Game;
-import com.example.alex.pubgolf.R;
-
 import android.content.Context;
 import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.example.alex.pubgolf.Models.Game;
+import com.example.alex.pubgolf.R;
+import com.facebook.Profile;
 
 import java.util.ArrayList;
 
@@ -70,7 +70,7 @@ public class GameArrayAdapter extends ArrayAdapter {
                 outerLinearLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorHighlight));
             }
             // Write "Hosting" in hostingTextView if user is host
-            if (info.Owner == null) // if host
+            if (info.Owner.UUID == Profile.getCurrentProfile().getId()) // if host
                 hostingTextView.setText("Hosting");
             else
                 hostingTextView.setText("");
