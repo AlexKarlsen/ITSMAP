@@ -32,14 +32,26 @@ public class EditCourseActivity extends AppCompatActivity {
         startService(gameServiceIntent);
         bindService(gameServiceIntent, connection, Context.BIND_IMPORTANT);
 
-        Button doneButton = (Button) findViewById(R.id.doneButton);
-
         // Add on click handler
+        Button doneButton = (Button) findViewById(R.id.doneButton);
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Save the created game to Firebase
+
+                // Save the created game to Firebase.
                 gameService.createNewGame(game);
+            }
+        });
+
+        Button addHoleButton = (Button) findViewById(R.id.addHoleButton);
+        addHoleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                // Create intent for host game activity.
+                Context context = getApplicationContext();
+                Intent addHoleIntent = new Intent(context, EditHoleActivity.class);
+                startActivity(addHoleIntent);
             }
         });
     }
