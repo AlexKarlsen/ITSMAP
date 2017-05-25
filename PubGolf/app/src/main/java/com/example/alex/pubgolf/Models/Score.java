@@ -5,8 +5,13 @@ package com.example.alex.pubgolf.Models;
  */
 
 public class Score {
-    public String User; // Type?
+    public Player player;
     public Long value;
 
     public Score() {}
+
+    public Score(Player _player, Long _value){
+        player = _player;
+        value = _value;
+    }
 }

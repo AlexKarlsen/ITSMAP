@@ -25,6 +25,8 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Arrays;
+
 public class LoginActivity extends AppCompatActivity {
 
     // https://firebase.google.com/docs/auth/android/facebook-login
@@ -44,6 +46,7 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         loginButton = (LoginButton) this.findViewById(R.id.login_button);
+        loginButton.setReadPermissions(Arrays.asList("public_profile", "email", "user_birthday", "user_friends"));
 
         // Register Callback
         callbackManager = CallbackManager.Factory.create();
@@ -51,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess(LoginResult loginResult)
             {
-                Log.d(TAG, "facebook:onSuccess:" + loginResult);
+                Log.d(TAG, "onSuccess:" + loginResult);
                 handleFacebookAccessToken(loginResult.getAccessToken());
             }
 
