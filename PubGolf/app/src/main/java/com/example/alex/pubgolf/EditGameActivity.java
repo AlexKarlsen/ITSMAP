@@ -13,10 +13,13 @@ import android.widget.Toast;
 
 import com.example.alex.pubgolf.Models.Game;
 import com.example.alex.pubgolf.Models.Player;
+import com.example.alex.pubgolf.Models.TimeContainer;
 import com.facebook.Profile;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.UUID;
 
 public class EditGameActivity extends AppCompatActivity {
 
@@ -25,6 +28,8 @@ public class EditGameActivity extends AppCompatActivity {
     EditText titleEditText;
     EditText descriptionEditText;
     EditText dateEditText;
+
+    TimeContainer selectedTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,9 +88,11 @@ public class EditGameActivity extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 
-                int monthString = monthOfYear + 1;
-                String dateString = dayOfMonth+"/"+monthString+"/"+year;
+                int month = monthOfYear + 1;
+                String dateString = dayOfMonth+"/"+month+"/"+year;
                 editText.setText(dateString);
+
+                selectedTime = new TimeContainer(year, month, dayOfMonth, 0, 0);
             }
         };
 
@@ -93,7 +100,11 @@ public class EditGameActivity extends AppCompatActivity {
         Timestamp nowTimestamp = new Timestamp(System.currentTimeMillis());
 
         Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(nowTimestamp.getTime());
+        if (selectedTime != null) {
+            cal.setTimeInMillis(selectedTime.toTimestamp().getTime());
+        } else {
+            cal.setTimeInMillis(nowTimestamp.getTime());
+        }
 
         DatePickerDialog d = new DatePickerDialog(EditGameActivity.this, dpd, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
         d.show();
@@ -121,9 +132,13 @@ public class EditGameActivity extends AppCompatActivity {
         // Create the new game object.
         Game game = new Game();
         game.Owner = new Player(Profile.getCurrentProfile().getId(), Profile.getCurrentProfile().getName());
+        game.Players = new HashMap<String, Player>();
+        game.Players.put(UUID.randomUUID().toString(), game.Owner);
         game.Title = title;
         game.Description = description;
-        game.StartTime = (long) 0; // Get the actual time instead.
+        if (selectedTime != null) {
+            game.StartTime = selectedTime.toTimestamp().getTime();
+        }
         game.HoleIndex = (long) 0;
         game.State = Game.GameState.Created;
 

@@ -121,10 +121,10 @@ public class EditHoleActivity extends AppCompatActivity {
                 editText.setText(dateString);
 
                 if (selectedTime == null) {
-                    selectedTime = new TimeContainer(year, monthOfYear, dayOfMonth, 0, 0);
+                    selectedTime = new TimeContainer(year, month, dayOfMonth, 0, 0);
                 } else {
                     selectedTime.year = year;
-                    selectedTime.monthOfYear = monthOfYear;
+                    selectedTime.monthOfYear = month;
                     selectedTime.dayOfMonth = dayOfMonth;
                 }
             }
@@ -134,7 +134,11 @@ public class EditHoleActivity extends AppCompatActivity {
         Timestamp nowTimestamp = new Timestamp(System.currentTimeMillis());
 
         Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(nowTimestamp.getTime());
+        if (selectedTime != null) {
+            cal.setTimeInMillis(selectedTime.toTimestamp().getTime());
+        } else {
+            cal.setTimeInMillis(nowTimestamp.getTime());
+        }
 
         DatePickerDialog d = new DatePickerDialog(EditHoleActivity.this, dpd, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
         d.show();
@@ -163,7 +167,11 @@ public class EditHoleActivity extends AppCompatActivity {
         Timestamp nowTimestamp = new Timestamp(System.currentTimeMillis());
 
         Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(nowTimestamp.getTime());
+        if (selectedTime != null) {
+            cal.setTimeInMillis(selectedTime.toTimestamp().getTime());
+        } else {
+            cal.setTimeInMillis(nowTimestamp.getTime());
+        }
 
         TimePickerDialog timePickerDialog = new TimePickerDialog(EditHoleActivity.this, listener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true);
         timePickerDialog.show();
