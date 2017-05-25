@@ -127,9 +127,10 @@ public class GameService extends Service {
     }
 
     // Add a user to a Game
-    public void addUserToGame(String gameKey, String UUID){
+    public void addUserToGame(String gameKey, String UUID, String name){
         Map<String, Object> gameUpdates = new HashMap<String, Object>();
         gameUpdates.put(USER_LEVEL, UUID);
+        gameUpdates.put(USER_LEVEL, name);
         mDatabase.child(GAMES_LEVEL).child(gameKey).updateChildren(gameUpdates);
     }
 

@@ -1,6 +1,7 @@
 package com.example.alex.pubgolf.Models;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by Emil- on 23/05/2017.
@@ -31,4 +32,7 @@ public class Game implements Serializable {
         Completed,
         Cancelled
     }
+
+    public List<Player> Players;
+    public List<Hole> Holes;
 }
