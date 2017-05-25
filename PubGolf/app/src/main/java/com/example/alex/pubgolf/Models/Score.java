@@ -1,10 +1,12 @@
 package com.example.alex.pubgolf.Models;
 
+import java.io.Serializable;
+
 /**
  * Created by Emil- on 23/05/2017.
  */
 
-public class Score {
+public class Score implements Serializable {
     public Player player;
     public long value;
 

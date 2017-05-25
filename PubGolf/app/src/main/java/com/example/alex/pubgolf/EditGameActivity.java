@@ -12,6 +12,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.alex.pubgolf.Models.Game;
+import com.example.alex.pubgolf.Models.Player;
+import com.facebook.Profile;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -118,6 +120,7 @@ public class EditGameActivity extends AppCompatActivity {
 
         // Create the new game object.
         Game game = new Game();
+        game.Owner = new Player(Profile.getCurrentProfile().getId(), Profile.getCurrentProfile().getName());
         game.Title = title;
         game.Description = description;
         game.StartTime = (long) 0; // Get the actual time instead.
