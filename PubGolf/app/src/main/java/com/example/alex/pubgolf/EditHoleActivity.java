@@ -40,7 +40,7 @@ public class EditHoleActivity extends AppCompatActivity {
         descriptionEditText = (EditText) this.findViewById(R.id.descriptionEditText);
         dateEditText = (EditText) this.findViewById(R.id.dateEditText);
         setupDateEditText();
-        timeEditText = (EditText) this.findViewById(R.id.timeEditText);
+        timeEditText = (EditText) this.findViewById(R.id.timeEditText1);
         setupTimeEditText();
 
         // Initialize the host game button.

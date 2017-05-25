@@ -20,6 +20,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -130,12 +131,22 @@ public class GameService extends Service {
     }
 
     // Add a user to a Game
-    public boolean addPlayerToGame(String gameKey, String UUID, String name){
-        //Map<String, Object> gameUpdates = new HashMap<String, Object>();
-        //gameUpdates.put(PLAYER_LEVEL, UUID);
-        //gameUpdates.put(PLAYER_LEVEL, name);
-
+    public boolean addPlayerToGame(final String gameKey, String UUID, String name){
         Player player = new Player(UUID, name);
+
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.hasChild(gameKey)) {
+                    // run some code
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         try {
             mDatabase.child(GAMES_LEVEL).child(gameKey).child(PLAYER_LEVEL).push().setValue(player);
