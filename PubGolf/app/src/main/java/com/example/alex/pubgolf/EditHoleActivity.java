@@ -1,6 +1,7 @@
 package com.example.alex.pubgolf;
 
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -9,10 +10,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.example.alex.pubgolf.Models.Game;
 import com.example.alex.pubgolf.Models.Hole;
+import com.example.alex.pubgolf.Models.TimeContainer;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -24,6 +26,9 @@ public class EditHoleActivity extends AppCompatActivity {
     EditText nameEditText;
     EditText descriptionEditText;
     EditText dateEditText;
+    EditText timeEditText;
+
+    TimeContainer selectedTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +40,8 @@ public class EditHoleActivity extends AppCompatActivity {
         descriptionEditText = (EditText) this.findViewById(R.id.descriptionEditText);
         dateEditText = (EditText) this.findViewById(R.id.dateEditText);
         setupDateEditText();
+        timeEditText = (EditText) this.findViewById(R.id.timeEditText);
+        setupTimeEditText();
 
         // Initialize the host game button.
         Button doneButton = (Button) this.findViewById(R.id.doneButton);
@@ -73,6 +80,33 @@ public class EditHoleActivity extends AppCompatActivity {
         });
     }
 
+    protected void setupTimeEditText() {
+
+        // Spawn a date picker when clicking the edit text.
+        timeEditText.setKeyListener(null);
+        timeEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+
+                if (!hasFocus) {
+                    return;
+                }
+
+                onTimeEditTextInteraction(timeEditText);
+            }
+        });
+        timeEditText.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                onDateEditTextInteraction(timeEditText);
+            }
+        });
+    }
+
     protected void onDateEditTextInteraction(final EditText editText) {
 
         // Modified from: https://stackoverflow.com/questions/36662642/how-to-open-datepicker-dialog-on-click-of-edit-text-android
@@ -82,9 +116,17 @@ public class EditHoleActivity extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 
-                int monthString = monthOfYear + 1;
-                String dateString = dayOfMonth+"/"+monthString+"/"+year;
+                int month = monthOfYear + 1;
+                String dateString = dayOfMonth+"/"+month+"/"+year;
                 editText.setText(dateString);
+
+                if (selectedTime == null) {
+                    selectedTime = new TimeContainer(year, monthOfYear, dayOfMonth, 0, 0);
+                } else {
+                    selectedTime.year = year;
+                    selectedTime.monthOfYear = monthOfYear;
+                    selectedTime.dayOfMonth = dayOfMonth;
+                }
             }
         };
 
@@ -96,6 +138,35 @@ public class EditHoleActivity extends AppCompatActivity {
 
         DatePickerDialog d = new DatePickerDialog(EditHoleActivity.this, dpd, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
         d.show();
+    }
+
+    protected void onTimeEditTextInteraction(final EditText editText) {
+
+        TimePickerDialog.OnTimeSetListener listener = new TimePickerDialog.OnTimeSetListener() {
+
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+
+                String timeString = hourOfDay + ":" + minute;
+                editText.setText(timeString);
+
+                if (selectedTime == null) {
+                    selectedTime = new TimeContainer(0, 0, 0, hourOfDay, minute);
+                } else {
+                    selectedTime.hourOfDay = hourOfDay;
+                    selectedTime.minute = minute;
+                }
+            }
+        };
+
+        // Prepopulate the date picker with today's date.
+        Timestamp nowTimestamp = new Timestamp(System.currentTimeMillis());
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(nowTimestamp.getTime());
+
+        TimePickerDialog timePickerDialog = new TimePickerDialog(EditHoleActivity.this, listener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true);
+        timePickerDialog.show();
     }
 
     protected void onDoneClicked() {
@@ -121,6 +192,9 @@ public class EditHoleActivity extends AppCompatActivity {
         Hole hole = new Hole();
         hole.Name = name;
         hole.Description = description;
+        if (selectedTime != null) {
+            hole.Time = selectedTime.toTimestamp().getTime();
+        }
 
         // Return from activity with the hole.
         Intent intent = new Intent();
