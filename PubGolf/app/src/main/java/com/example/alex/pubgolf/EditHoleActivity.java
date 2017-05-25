@@ -19,6 +19,8 @@ import java.util.Calendar;
 
 public class EditHoleActivity extends AppCompatActivity {
 
+    public static final String EXTRA_HOLE = "EXTRA_HOLE";
+
     EditText nameEditText;
     EditText descriptionEditText;
     EditText dateEditText;
@@ -121,6 +123,10 @@ public class EditHoleActivity extends AppCompatActivity {
         hole.Description = description;
 
         // Return from activity with the hole.
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_HOLE, hole);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
     protected boolean inputIsValid() {

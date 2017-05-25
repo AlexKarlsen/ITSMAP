@@ -2,13 +2,14 @@ package com.example.alex.pubgolf.Models;
 
 import android.location.Address;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by Emil- on 23/05/2017.
  */
 
-public class Hole {
+public class Hole implements Serializable {
     public String Name;
     public Address HoleAddress;
     public Long Time;   // Time in millis. Optional

@@ -21,6 +21,8 @@ import java.util.List;
 
 public class EditCourseActivity extends AppCompatActivity {
 
+    public static final int NEW_HOLE_REQUEST = 10001;
+
     Game game;
     GameService gameService;
     Boolean bound = false;
@@ -35,6 +37,8 @@ public class EditCourseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_course);
 
+        listView = (ListView) findViewById(R.id.holeListView);
+
         Intent intent = getIntent();
         if (intent != null) {
             handleStartWithIntent(intent);
@@ -44,13 +48,13 @@ public class EditCourseActivity extends AppCompatActivity {
         startService(gameServiceIntent);
         bindService(gameServiceIntent, connection, Context.BIND_IMPORTANT);
 
-        listView = (ListView) findViewById(R.id.holeListView);
-
         // Add on click handler
         Button doneButton = (Button) findViewById(R.id.doneButton);
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                game.Holes = holesList;
 
                 // Save the created game to Firebase.
                 gameService.createNewGame(game);
@@ -65,7 +69,7 @@ public class EditCourseActivity extends AppCompatActivity {
                 // Create intent for host game activity.
                 Context context = getApplicationContext();
                 Intent addHoleIntent = new Intent(context, EditHoleActivity.class);
-                startActivity(addHoleIntent);
+                startActivityForResult(addHoleIntent, NEW_HOLE_REQUEST);
             }
         });
 
@@ -74,7 +78,11 @@ public class EditCourseActivity extends AppCompatActivity {
 
     protected void handleStartWithIntent(Intent intent) {
         game = (Game) intent.getExtras().getSerializable(EditGameActivity.EXTRA_GAME);
-        holesList = (ArrayList<Hole>) game.Holes;
+        if (game == null) return;
+        if (game.Holes != null) {
+            holesList = new ArrayList<Hole>();
+            holesList.addAll(game.Holes);
+        }
         updateListView(holesList);
     }
 
@@ -123,5 +131,17 @@ public class EditCourseActivity extends AppCompatActivity {
 
         // Unregister broadcast receiver.
         //LocalBroadcastManager.getInstance(this).unregisterReceiver(onWeatherServiceResult);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == NEW_HOLE_REQUEST && resultCode == RESULT_OK) {
+
+            Hole hole = (Hole) data.getExtras().getSerializable(EditHoleActivity.EXTRA_HOLE);
+            if (hole == null) return;
+            holesList.add(hole);
+            updateListView(holesList);
+        }
     }
 }
