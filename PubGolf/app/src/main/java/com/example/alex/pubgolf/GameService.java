@@ -14,6 +14,7 @@ import android.util.Log;
 
 import com.example.alex.pubgolf.Models.Game;
 import com.example.alex.pubgolf.Models.Hole;
+import com.example.alex.pubgolf.Models.Player;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -129,11 +130,21 @@ public class GameService extends Service {
     }
 
     // Add a user to a Game
-    public void addUserToGame(String gameKey, String UUID, String name){
-        Map<String, Object> gameUpdates = new HashMap<String, Object>();
-        gameUpdates.put(PLAYER_LEVEL, UUID);
-        gameUpdates.put(PLAYER_LEVEL, name);
-        mDatabase.child(GAMES_LEVEL).child(gameKey).updateChildren(gameUpdates);
+    public boolean addPlayerToGame(String gameKey, String UUID, String name){
+        //Map<String, Object> gameUpdates = new HashMap<String, Object>();
+        //gameUpdates.put(PLAYER_LEVEL, UUID);
+        //gameUpdates.put(PLAYER_LEVEL, name);
+
+        Player player = new Player(UUID, name);
+
+        try {
+            mDatabase.child(GAMES_LEVEL).child(gameKey).child(PLAYER_LEVEL).push().setValue(player);
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+        return true;
     }
 
     // Add hole to an existing game
