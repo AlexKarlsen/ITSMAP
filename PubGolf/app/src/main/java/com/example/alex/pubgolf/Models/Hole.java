@@ -12,9 +12,9 @@ import java.util.List;
 public class Hole implements Serializable {
     public String Name;
     public Address HoleAddress;
-    public Long Time;   // Time in millis. Optional
+    public long Time;   // Time in millis. Optional
     public String Description;
-    public Long Index;  // Index representing the hole order in a Game.
+    public long Index;  // Index representing the hole order in a Game.
 
     public List<Score> Scores;
 

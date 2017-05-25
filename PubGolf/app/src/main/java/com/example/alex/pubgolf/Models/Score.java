@@ -6,7 +6,7 @@ package com.example.alex.pubgolf.Models;
 
 public class Score {
     public Player player;
-    public Long value;
+    public long value;
 
     public Score() {}
 

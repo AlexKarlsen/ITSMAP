@@ -13,9 +13,9 @@ public class Game implements Serializable {
     public Player Owner;    // Type?
     public String Title;
     public String Description;
-    public Long StartTime;  // Date in millis. Optional
+    public long StartTime;  // Date in millis. Optional
 
-    public Long HoleIndex;  // Active Hole
+    public long HoleIndex;  // Active Hole
     public GameState State;
 
     public Game() {}

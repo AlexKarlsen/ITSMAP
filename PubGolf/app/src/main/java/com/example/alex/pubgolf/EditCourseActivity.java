@@ -16,6 +16,7 @@ import com.example.alex.pubgolf.Adapters.HoleArrayAdapter;
 import com.example.alex.pubgolf.Models.Game;
 import com.example.alex.pubgolf.Models.Hole;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,6 +56,10 @@ public class EditCourseActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 game.Holes = holesList;
+
+                for (int index = 0; index < game.Holes.size(); index++) {
+                    game.Holes.get(index).Index = (long) index;
+                }
 
                 // Save the created game to Firebase.
                 gameService.createNewGame(game);
