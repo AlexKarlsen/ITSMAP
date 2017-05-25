@@ -2,6 +2,7 @@ package com.example.alex.pubgolf;
 
 /**
  * Created by Alex on 23/05/2017.
+ * Edited by Alex on 24/05/2017.
  */
 
 import android.app.Service;
@@ -26,15 +27,19 @@ public class GameService extends Service {
     //Logging keys
     private static final String LOG = "GameService";
 
-    //Firebase URls
+    //Firebase URl Suffix
     private static final String GAMES_LEVEL = "Games";
+    private static final String USER_LEVEL = "Users";
 
+    // Broadcasting Tags
     public static final String BROADCAST_GAME_SERVICE_RESULT = "BROADCAST_GAME_SERVICE_RESULT";
     public static final String EXTRA_DESCRIPTION = "EXTRA_DESCRIPTION";
     public static final String EXTRA_GAME = "EXTRA_GAME";
 
+    // Service state boolean
     private boolean started = false;
 
+    // Firebase reference
     private DatabaseReference mDatabase;
 
     public GameService() {
@@ -121,13 +126,20 @@ public class GameService extends Service {
         mDatabase.child(GAMES_LEVEL).child(gameKey).removeValue();
     }
 
-    //Broadcasting events to the activity, activities need to bind to service and implement onRecieve()
+    // Add a user to a Game
+    public void addUserToGame(String gameKey, String UUID){
+        Map<String, Object> gameUpdates = new HashMap<String, Object>();
+        gameUpdates.put(USER_LEVEL, UUID);
+        mDatabase.child(GAMES_LEVEL).child(gameKey).updateChildren(gameUpdates);
+    }
+
+    // Broadcasting events to the activity, activities need to bind to service and implement onRecieve()
     private void broadcastTaskResult(String changedDescription, Game changedGame){
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(BROADCAST_GAME_SERVICE_RESULT);
         broadcastIntent.putExtra(EXTRA_DESCRIPTION, changedDescription);
         broadcastIntent.putExtra(EXTRA_GAME, changedGame);
-        Log.d(LOG, "Broadcasting");
+        Log.d(LOG, "Broadcasting from Game Service");
         LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
     }
 
