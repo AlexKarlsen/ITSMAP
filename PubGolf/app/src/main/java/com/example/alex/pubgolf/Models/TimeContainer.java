@@ -17,6 +17,7 @@ public class TimeContainer {
     public TimeContainer() {
         this.year = 0;
         this.monthOfYear = 0;
+
         this.dayOfMonth = 0;
         this.hourOfDay = 0;
         this.minute = 0;
@@ -31,6 +32,6 @@ public class TimeContainer {
     }
 
     public Timestamp toTimestamp() {
-        return Timestamp.valueOf(year + "-" + monthOfYear + "-" + dayOfMonth + " " + hourOfDay + ":" + minute);
+        return Timestamp.valueOf(year + "-" + monthOfYear + "-" + dayOfMonth + " " + hourOfDay + ":" + minute + ":00.0");
     }
 }
