@@ -9,6 +9,8 @@ import android.widget.Button;
 
 public class LobbyActivity extends AppCompatActivity {
 
+    public static final int JOIN_GAME_REQUEST = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,7 +36,18 @@ public class LobbyActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 // Create intent for join game activity.
+                Context context = getApplicationContext();
+                Intent intent = new Intent(context, JoinGameActivity.class);
+                startActivityForResult(intent, JOIN_GAME_REQUEST);
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == JOIN_GAME_REQUEST && resultCode == RESULT_OK) {
+
+        }
     }
 }

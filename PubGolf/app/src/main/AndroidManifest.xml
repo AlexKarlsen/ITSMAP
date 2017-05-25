@@ -48,7 +48,8 @@
             android:value="@string/facebook_app_id" />
 
         <activity android:name=".GameListActivity" />
-        <activity android:name=".EditHoleActivity"></activity>
+        <activity android:name=".EditHoleActivity" />
+        <activity android:name=".JoinGameActivity"></activity>
     </application>
 
 </manifest>
