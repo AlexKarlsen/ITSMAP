@@ -13,6 +13,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.example.alex.pubgolf.Models.Game;
+import com.example.alex.pubgolf.Models.Hole;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,7 +30,8 @@ public class GameService extends Service {
 
     //Firebase URl Suffix
     private static final String GAMES_LEVEL = "Games";
-    private static final String USER_LEVEL = "Users";
+    private static final String HOLES_LEVEL = "Holes";
+    private static final String PLAYER_LEVEL = "Players";
 
     // Broadcasting Tags
     public static final String BROADCAST_GAME_SERVICE_RESULT = "BROADCAST_GAME_SERVICE_RESULT";
@@ -129,9 +131,14 @@ public class GameService extends Service {
     // Add a user to a Game
     public void addUserToGame(String gameKey, String UUID, String name){
         Map<String, Object> gameUpdates = new HashMap<String, Object>();
-        gameUpdates.put(USER_LEVEL, UUID);
-        gameUpdates.put(USER_LEVEL, name);
+        gameUpdates.put(PLAYER_LEVEL, UUID);
+        gameUpdates.put(PLAYER_LEVEL, name);
         mDatabase.child(GAMES_LEVEL).child(gameKey).updateChildren(gameUpdates);
+    }
+
+    // Add hole to an existing game
+    public void addHoleToExistingGame(String gameKey, Hole hole){
+        mDatabase.child(GAMES_LEVEL).child(gameKey).child(HOLES_LEVEL).setValue(hole);
     }
 
     // Broadcasting events to the activity, activities need to bind to service and implement onRecieve()
