@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -34,6 +36,7 @@ public class LoginActivity extends AppCompatActivity {
 
     CallbackManager callbackManager;
     LoginButton loginButton;
+    Button continueButton;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
@@ -50,7 +53,9 @@ public class LoginActivity extends AppCompatActivity {
 
         // Register Callback
         callbackManager = CallbackManager.Factory.create();
+
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+
             @Override
             public void onSuccess(LoginResult loginResult)
             {
@@ -69,18 +74,37 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        // Initialize the continue button.
+        continueButton = (Button) this.findViewById(R.id.continueButton);
+        continueButton.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // Create intent for game list activity.
+                Context context = getApplicationContext();
+                Intent gameListIntent = new Intent(context, GameListActivity.class);
+                startActivity(gameListIntent);
+            }
+        });
+        continueButton.setVisibility(View.GONE);
+
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
+
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                    continueButton.setVisibility(View.VISIBLE);
+
                 } else {
+
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
+                    continueButton.setVisibility(View.GONE);
                 }
-                // ...
             }
         };
     }
@@ -88,10 +112,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
         mAuth.addAuthStateListener(mAuthListener);
-        //FirebaseUser currentUser = mAuth.getCurrentUser();
-        // updateUI(currentUser);
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
@@ -115,6 +136,7 @@ public class LoginActivity extends AppCompatActivity {
                             startActivity(gameListIntent);
 
                         } else {
+
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             //Toast.makeText(FacebookLoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
