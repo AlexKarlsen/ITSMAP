@@ -121,10 +121,10 @@ public class EditHoleActivity extends AppCompatActivity {
                 editText.setText(dateString);
 
                 if (selectedTime == null) {
-                    selectedTime = new TimeContainer(year, monthOfYear, dayOfMonth, 0, 0);
+                    selectedTime = new TimeContainer(year, month, dayOfMonth, 0, 0);
                 } else {
                     selectedTime.year = year;
-                    selectedTime.monthOfYear = monthOfYear;
+                    selectedTime.monthOfYear = month;
                     selectedTime.dayOfMonth = dayOfMonth;
                 }
             }
