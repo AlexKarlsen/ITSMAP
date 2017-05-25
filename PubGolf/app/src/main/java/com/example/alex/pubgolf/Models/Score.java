@@ -7,13 +7,13 @@ import java.io.Serializable;
  */
 
 public class Score implements Serializable {
-    public Player player;
-    public long value;
+    public Player Player;
+    public long Value;
 
     public Score() {}
 
     public Score(Player _player, Long _value){
-        player = _player;
-        value = _value;
+        Player = _player;
+        Value = _value;
     }
 }
