@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.example.alex.pubgolf">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.alex.pubgolf">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -36,6 +37,7 @@
         <activity android:name=".LobbyActivity" />
         <activity android:name=".EditCourseActivity" />
         <activity android:name=".EditGameActivity" />
+
         <service
             android:name=".GameService"
             android:enabled="true"
@@ -46,7 +48,7 @@
             android:value="@string/facebook_app_id" />
 
         <activity android:name=".GameListActivity" />
-
+        <activity android:name=".EditHoleActivity"></activity>
     </application>
 
 </manifest>
