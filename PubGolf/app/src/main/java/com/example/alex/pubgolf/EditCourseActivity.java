@@ -25,7 +25,7 @@ public class EditCourseActivity extends AppCompatActivity {
     GameService gameService;
     Boolean bound = false;
 
-    ArrayList<Hole> holesList;
+    ArrayList<Hole> holesList = new ArrayList<Hole>();
 
     // Views
     ListView listView;
@@ -61,7 +61,8 @@ public class EditCourseActivity extends AppCompatActivity {
 
     protected void handleStartWithIntent(Intent intent) {
         game = (Game) intent.getExtras().getSerializable(EditGameActivity.EXTRA_GAME);
-        //holesList = game.
+        holesList = (ArrayList<Hole>) game.Holes;
+        updateListView(holesList);
     }
 
     private void updateListView(ArrayList<Hole> data) {

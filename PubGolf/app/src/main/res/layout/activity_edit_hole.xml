@@ -57,14 +57,6 @@
             android:inputType="textMultiLine" />
 
         <EditText
-            android:id="@+id/addressEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Address"
-            android:inputType="textPostalAddress" />
-
-        <EditText
             android:id="@+id/dateEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
