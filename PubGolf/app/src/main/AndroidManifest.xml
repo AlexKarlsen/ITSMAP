@@ -49,7 +49,13 @@
 
         <activity android:name=".GameListActivity" />
         <activity android:name=".EditHoleActivity" />
-        <activity android:name=".JoinGameActivity"></activity>
+        <activity android:name=".JoinGameActivity" />
+        <activity
+            android:name=".GameNavigationActivity"
+            android:label="@string/title_activity_game_navigation"
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
     </application>
 
 </manifest>

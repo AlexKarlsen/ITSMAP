@@ -13,7 +13,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.alex.pubgolf.Adapters.GameArrayAdapter;
 import com.example.alex.pubgolf.Models.Game;
@@ -21,6 +23,8 @@ import com.example.alex.pubgolf.Models.Game;
 import java.util.ArrayList;
 
 public class GameListActivity extends AppCompatActivity {
+
+    public static final String EXTRA_GAME = "EXTRA_GAME";
 
     ArrayList<Game> gamesList = new ArrayList<Game>();
     //Boolean bound = false;
@@ -45,6 +49,17 @@ public class GameListActivity extends AppCompatActivity {
     public void initializeSubviews()
     {
         gameListView = (ListView) findViewById(R.id.gamesListView);
+        gameListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> list, View v, int pos, long id) {
+
+                // Pass the selected game to the game activity, through
+                Game selectedGame = gamesList.get(pos);
+                Context context = getApplicationContext();
+                Intent gameIntent = new Intent(context, GameNavigationActivity.class);
+                gameIntent.putExtra(EXTRA_GAME, selectedGame);
+                startActivity(gameIntent);
+            }
+        });
         fab = (FloatingActionButton) findViewById(R.id.floatingActionButton);
 
         // Add on click handler to the fab.
