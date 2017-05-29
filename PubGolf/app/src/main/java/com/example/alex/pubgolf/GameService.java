@@ -24,6 +24,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 public class GameService extends Service {
 
@@ -37,8 +38,12 @@ public class GameService extends Service {
 
     // Broadcasting Tags
     public static final String BROADCAST_GAME_SERVICE_RESULT = "BROADCAST_GAME_SERVICE_RESULT";
+    public static final String BROADCAST_ADD_USER = "BROADCAST_ADD_USER";
+
     public static final String EXTRA_DESCRIPTION = "EXTRA_DESCRIPTION";
     public static final String EXTRA_GAME = "EXTRA_GAME";
+
+    public static final String EXTRA_ADD_SUCCESS = "EXTRA_ADD_SUCCESS";
 
     // Service state boolean
     private boolean started = false;
@@ -131,15 +136,27 @@ public class GameService extends Service {
     }
 
     // Add a user to a Game
-    public boolean addPlayerToGame(final String gameKey, String UUID, String name){
-        Player player = new Player(UUID, name);
+    public void addPlayerToGame(final String gameKey, String UUID, String name){
+        final Player player = new Player(UUID, name);
+        boolean success;
 
-        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase.child(GAMES_LEVEL).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
+                Intent broadcastIntent = new Intent();
+                broadcastIntent.setAction(BROADCAST_ADD_USER);
+
                 if (snapshot.hasChild(gameKey)) {
-                    // run some code
+                    // Should check if player is already in the game
+                    mDatabase.child(GAMES_LEVEL).child(gameKey).child(PLAYER_LEVEL).push().setValue(player);
+
+                    broadcastIntent.putExtra(EXTRA_ADD_SUCCESS, true);
                 }
+                else {
+                    broadcastIntent.putExtra(EXTRA_ADD_SUCCESS, false);
+                }
+                Log.d(LOG, "Broadcasting from Game Service");
+                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(broadcastIntent);
             }
 
             @Override
@@ -147,15 +164,6 @@ public class GameService extends Service {
 
             }
         });
-
-        try {
-            mDatabase.child(GAMES_LEVEL).child(gameKey).child(PLAYER_LEVEL).push().setValue(player);
-        }
-        catch (Exception ex)
-        {
-            return false;
-        }
-        return true;
     }
 
     // Add hole to an existing game

@@ -3,8 +3,8 @@ package com.example.alex.pubgolf;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -19,7 +19,6 @@ import com.facebook.Profile;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.UUID;
 
 public class EditGameActivity extends AppCompatActivity {
 
@@ -132,7 +131,7 @@ public class EditGameActivity extends AppCompatActivity {
         Game game = new Game();
         game.Owner = new Player(Profile.getCurrentProfile().getId(), Profile.getCurrentProfile().getName());
         game.Players = new HashMap<String, Player>();
-        game.Players.put(UUID.randomUUID().toString(), game.Owner);
+        game.Players.put(Profile.getCurrentProfile().getId(), game.Owner);
         game.Title = title;
         game.Description = description;
         if (selectedTime != null) {
