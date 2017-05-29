@@ -44,6 +44,8 @@ public class GameService extends Service {
 
     // BroadcastTaskResult tags
     public static final String NEW_GAME_ADDED = "NEW_GAME_ADDED";
+    public static final String OLD_GAME_CHANGED = "OLD_GAME_CHANGED";
+    public static final String OLD_GAME_REMOVED = "OLD_GAME_REMOVED";
 
     public static final String EXTRA_DESCRIPTION = "EXTRA_DESCRIPTION";
     public static final String EXTRA_GAME = "EXTRA_GAME";
@@ -93,18 +95,24 @@ public class GameService extends Service {
 
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                    Log.d(LOG, "Received changed game");
-                    Game changedGame = dataSnapshot.getValue(Game.class);
-                    // Inform activity or list view
-                    broadcastTaskResult("A Game is changed", changedGame);
+                    // Check if user is a joined player of the received game
+                    if (dataSnapshot.child(PLAYER_LEVEL).hasChild(Profile.getCurrentProfile().getId())) {
+                        Log.d(LOG, "Received changed game");
+                        Game changedGame = dataSnapshot.getValue(Game.class);
+                        // Inform activity or list view
+                        broadcastTaskResult(OLD_GAME_CHANGED, changedGame);
+                    }
                 }
 
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
-                    Log.d(LOG, "Received removed game");
-                    Game removedGame = dataSnapshot.getValue(Game.class);
-                    // Inform activity or list view
-                    broadcastTaskResult("A Game is removed", removedGame);
+                    // Check if user is a joined player of the received game
+                    if (dataSnapshot.child(PLAYER_LEVEL).hasChild(Profile.getCurrentProfile().getId())) {
+                        Log.d(LOG, "Received removed game");
+                        Game removedGame = dataSnapshot.getValue(Game.class);
+                        // Inform activity or list view
+                        broadcastTaskResult(OLD_GAME_REMOVED, removedGame);
+                    }
                 }
 
                 @Override
