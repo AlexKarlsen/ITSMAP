@@ -1,5 +1,6 @@
 package com.example.alex.pubgolf;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -19,8 +20,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.alex.pubgolf.Adapters.HoleArrayAdapter;
 import com.example.alex.pubgolf.Models.Game;
 import com.example.alex.pubgolf.Models.Hole;
 
@@ -97,6 +100,8 @@ public class GameNavigationActivity extends AppCompatActivity {
         private static final String ARG_SECTION_NUMBER = "section_number";
 
         Game game;
+        ArrayList<Hole> holesList;
+
 
         public GameFragment() {
         }
@@ -125,11 +130,34 @@ public class GameNavigationActivity extends AppCompatActivity {
                 // Game details section.
 
                 View rootView = inflater.inflate(R.layout.fragment_game_details, container, false);
-                TextView textView = (TextView) rootView.findViewById(R.id.gameDescriptionLabel);
-                textView.setText(game.Description);
+
+                TextView descriptionTextView = (TextView) rootView.findViewById(R.id.gameDescriptionLabel);
+                descriptionTextView.setText(game.Description);
+
+                TextView dateTextView = (TextView) rootView.findViewById(R.id.gameDateLabel);
+                dateTextView.setText(game.GetStartTimeAsTimestamp().toString());
+
                 return rootView;
-            }
-            else {
+
+            } else if (sectionNumber == 2) {
+
+                // Course section.
+
+                View rootView = inflater.inflate(R.layout.fragment_game_course, container, false);
+
+                if (game.Holes != null) {
+
+                    holesList = new ArrayList<Hole>();
+                    holesList.addAll(game.Holes);
+
+                    ListView holesListView = (ListView) rootView.findViewById(R.id.holesListView);
+                    HoleArrayAdapter adapter = new HoleArrayAdapter(getActivity(), R.layout.hole_info_list_item, holesList);
+                    holesListView.setAdapter(adapter);
+                }
+
+                return rootView;
+
+            } else {
 
                 // Scoreboard section.
 
@@ -160,16 +188,18 @@ public class GameNavigationActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            // Show 2 total pages.
-            return 2;
+            // Show 3 total pages.
+            return 3;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "Game details";
+                    return "Details";
                 case 1:
+                    return "Course";
+                case 2:
                     return "Scoreboard";
             }
             return null;
