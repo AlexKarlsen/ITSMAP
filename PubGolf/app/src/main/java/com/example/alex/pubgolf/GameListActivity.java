@@ -1,9 +1,12 @@
 package com.example.alex.pubgolf;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +27,8 @@ public class GameListActivity extends AppCompatActivity {
     public static final String EXTRA_GAME = "EXTRA_GAME";
 
     ArrayList<Game> gamesList = new ArrayList<Game>();
+    //Boolean bound = false;
+    //GameService gameService;
 
     // Views
     ListView gameListView;
@@ -79,6 +84,33 @@ public class GameListActivity extends AppCompatActivity {
         gameListView.setAdapter(adapter);
     }
 
+    /*
+    // Modified from: https://developer.android.com/guide/components/bound-services.html#Binder
+    private ServiceConnection connection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+
+            // Cast the IBinder and get WeatherInfoService instance.
+            GameService.GameServiceBinder binder = (GameService.GameServiceBinder) service;
+            gameService = binder.getService();
+            bound = true;
+
+            // Update the views with data from the service.
+            if (gameService != null) {
+                //updateCurrentView(weatherInfoService.getCurrentWeather());
+                //updateHistoricListView(weatherInfoService.getPastWeather());
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            bound = false;
+        }
+    };
+*/
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -101,6 +133,13 @@ public class GameListActivity extends AppCompatActivity {
 
         // Unregister broadcast receiver.
         LocalBroadcastManager.getInstance(this).unregisterReceiver(onGameServiceResult);
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        stopService(new Intent(this, GameService.class));
     }
 
     private BroadcastReceiver onGameServiceResult = new BroadcastReceiver() {
