@@ -15,6 +15,7 @@ import android.util.Log;
 import com.example.alex.pubgolf.Models.Game;
 import com.example.alex.pubgolf.Models.Hole;
 import com.example.alex.pubgolf.Models.Player;
+import com.example.alex.pubgolf.Models.Score;
 import com.facebook.Profile;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -25,7 +26,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 public class GameService extends Service {
 
@@ -36,6 +36,7 @@ public class GameService extends Service {
     private static final String GAMES_LEVEL = "Games";
     private static final String HOLES_LEVEL = "Holes";
     private static final String PLAYER_LEVEL = "Players";
+    private static final String SCORES_LEVEL = "Scores";
 
     // Broadcasting Tags
     public static final String BROADCAST_GAME_SERVICE_RESULT = "BROADCAST_GAME_SERVICE_RESULT";
@@ -43,11 +44,14 @@ public class GameService extends Service {
 
     // BroadcastTaskResult tags
     public static final String NEW_GAME_ADDED = "NEW_GAME_ADDED";
+    public static final String OLD_GAME_CHANGED = "OLD_GAME_CHANGED";
+    public static final String OLD_GAME_REMOVED = "OLD_GAME_REMOVED";
 
     public static final String EXTRA_DESCRIPTION = "EXTRA_DESCRIPTION";
     public static final String EXTRA_GAME = "EXTRA_GAME";
 
     public static final String EXTRA_ADD_SUCCESS = "EXTRA_ADD_SUCCESS";
+    public static final String EXTRA_ADD_SCORE_SUCCESS = "EXTRA_ADD_SCORE_SUCCESS";
 
     // Service state boolean
     private boolean started = false;
@@ -92,18 +96,24 @@ public class GameService extends Service {
 
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                    Log.d(LOG, "Received changed game");
-                    Game changedGame = dataSnapshot.getValue(Game.class);
-                    // Inform activity or list view
-                    broadcastTaskResult("A Game is changed", changedGame);
+                    // Check if user is a joined player of the received game
+                    if (dataSnapshot.child(PLAYER_LEVEL).hasChild(Profile.getCurrentProfile().getId())) {
+                        Log.d(LOG, "Received changed game");
+                        Game changedGame = dataSnapshot.getValue(Game.class);
+                        // Inform activity or list view
+                        broadcastTaskResult(OLD_GAME_CHANGED, changedGame);
+                    }
                 }
 
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
-                    Log.d(LOG, "Received removed game");
-                    Game removedGame = dataSnapshot.getValue(Game.class);
-                    // Inform activity or list view
-                    broadcastTaskResult("A Game is removed", removedGame);
+                    // Check if user is a joined player of the received game
+                    if (dataSnapshot.child(PLAYER_LEVEL).hasChild(Profile.getCurrentProfile().getId())) {
+                        Log.d(LOG, "Received removed game");
+                        Game removedGame = dataSnapshot.getValue(Game.class);
+                        // Inform activity or list view
+                        broadcastTaskResult(OLD_GAME_REMOVED, removedGame);
+                    }
                 }
 
                 @Override
@@ -182,6 +192,42 @@ public class GameService extends Service {
     // Add hole to an existing game
     public void addHoleToExistingGame(String gameKey, Hole hole){
         mDatabase.child(GAMES_LEVEL).child(gameKey).child(HOLES_LEVEL).setValue(hole);
+    }
+
+    // Add a score to a hole
+    public void addScoreToHole(final String gameKey, final String holeIndex, final Player player, final long value){
+
+        // Check db to see if game exists and if a score for the player has already been added
+        mDatabase.child(GAMES_LEVEL).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                Intent broadcastIntent = new Intent();
+                broadcastIntent.setAction(BROADCAST_ADD_USER);
+
+                // Check if game exists in firebase
+                if (snapshot.hasChild(gameKey)) {
+                    // Check if player score has already been added
+                    if (!snapshot.child(gameKey).child(HOLES_LEVEL).child(holeIndex).hasChild(player.UUID)) {
+                        Score score = new Score(player, value);
+                        mDatabase.child(GAMES_LEVEL).child(gameKey).child(HOLES_LEVEL).child(holeIndex).child(SCORES_LEVEL).child(player.UUID).setValue(score);
+                        broadcastIntent.putExtra(EXTRA_ADD_SCORE_SUCCESS, true);
+                    }
+                    else    //Add failed; tell user
+                        broadcastIntent.putExtra(EXTRA_ADD_SCORE_SUCCESS, false);
+                }
+                else {  //Add failed; tell user
+                    broadcastIntent.putExtra(EXTRA_ADD_SUCCESS, false);
+                }
+                Log.d(LOG, "Broadcasting join game result from Game Service");
+                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(broadcastIntent);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     // Broadcasting events to the activity, activities need to bind to service and implement onRecieve()
