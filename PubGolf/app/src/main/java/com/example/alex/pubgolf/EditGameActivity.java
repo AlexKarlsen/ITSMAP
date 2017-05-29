@@ -127,7 +127,6 @@ public class EditGameActivity extends AppCompatActivity {
         // Get the values input by the user.
         String title = titleEditText.getText().toString();
         String description = descriptionEditText.getText().toString();
-        String date = dateEditText.getText().toString();
 
         // Create the new game object.
         Game game = new Game();
@@ -151,7 +150,13 @@ public class EditGameActivity extends AppCompatActivity {
 
     protected boolean inputIsValid() {
 
-        // TODO: Actually validate the input.
+        // Actually validate the input.
+        if (titleEditText.getText().toString().length() == 0) {
+            return false;
+        } else if (descriptionEditText.getText().toString().length() == 0) {
+            return false;
+        }
+
         return true;
     }
 }

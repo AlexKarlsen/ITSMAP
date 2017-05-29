@@ -213,7 +213,13 @@ public class EditHoleActivity extends AppCompatActivity {
 
     protected boolean inputIsValid() {
 
-        // TODO: Actually validate the input.
+        // Actually validate the input.
+        if (nameEditText.getText().toString().length() == 0) {
+            return false;
+        } else if (descriptionEditText.getText().toString().length() == 0) {
+            return false;
+        }
+
         return true;
     }
 }
