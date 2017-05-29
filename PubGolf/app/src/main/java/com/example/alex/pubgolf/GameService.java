@@ -51,6 +51,7 @@ public class GameService extends Service {
     public static final String EXTRA_GAME = "EXTRA_GAME";
 
     public static final String EXTRA_ADD_SUCCESS = "EXTRA_ADD_SUCCESS";
+    public static final String EXTRA_ADD_SCORE_SUCCESS = "EXTRA_ADD_SCORE_SUCCESS";
 
     // Service state boolean
     private boolean started = false;
@@ -194,9 +195,39 @@ public class GameService extends Service {
     }
 
     // Add a score to a hole
-    public void addScoreToHole(String gameKey, String holeIndex, Player player, long value){
-        Score score = new Score(player, value);
-        mDatabase.child(GAMES_LEVEL).child(gameKey).child(HOLES_LEVEL).child(holeIndex).child(SCORES_LEVEL).child(player.UUID).setValue(score);
+    public void addScoreToHole(final String gameKey, final String holeIndex, final Player player, final long value){
+
+        // Check db to see if game exists and if a score for the player has already been added
+        mDatabase.child(GAMES_LEVEL).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                Intent broadcastIntent = new Intent();
+                broadcastIntent.setAction(BROADCAST_ADD_USER);
+
+                // Check if game exists in firebase
+                if (snapshot.hasChild(gameKey)) {
+                    // Check if player score has already been added
+                    if (!snapshot.child(gameKey).child(HOLES_LEVEL).child(holeIndex).hasChild(player.UUID)) {
+                        Score score = new Score(player, value);
+                        mDatabase.child(GAMES_LEVEL).child(gameKey).child(HOLES_LEVEL).child(holeIndex).child(SCORES_LEVEL).child(player.UUID).setValue(score);
+                        broadcastIntent.putExtra(EXTRA_ADD_SCORE_SUCCESS, true);
+                    }
+                    else    //Add failed; tell user
+                        broadcastIntent.putExtra(EXTRA_ADD_SCORE_SUCCESS, false);
+                }
+                else {  //Add failed; tell user
+                    broadcastIntent.putExtra(EXTRA_ADD_SUCCESS, false);
+                }
+                Log.d(LOG, "Broadcasting join game result from Game Service");
+                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(broadcastIntent);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     // Broadcasting events to the activity, activities need to bind to service and implement onRecieve()

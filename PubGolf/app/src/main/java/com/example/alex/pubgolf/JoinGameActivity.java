@@ -84,6 +84,7 @@ public class JoinGameActivity extends AppCompatActivity {
         finish();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
     }
+
     // Modified from: https://developer.android.com/guide/components/bound-services.html#Binder
     private ServiceConnection connection = new ServiceConnection() {
 
