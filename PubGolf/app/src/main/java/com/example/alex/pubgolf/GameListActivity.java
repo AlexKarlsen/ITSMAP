@@ -132,13 +132,16 @@ public class GameListActivity extends AppCompatActivity {
         //}
 
         // Unregister broadcast receiver.
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(onGameServiceResult);
+        //LocalBroadcastManager.getInstance(this).unregisterReceiver(onGameServiceResult);
     }
 
     @Override
     protected void onDestroy()
     {
         super.onDestroy();
+
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onGameServiceResult);
+
         stopService(new Intent(this, GameService.class));
     }
 
@@ -153,10 +156,35 @@ public class GameListActivity extends AppCompatActivity {
             if (description == GameService.NEW_GAME_ADDED) {
                 gamesList.add(game);
                 updateGamesListView(gamesList);
-            } else {
+            }
+            else if (description == GameService.OLD_GAME_CHANGED)
+            {
+                // Find index of old game in existing list
+                Game gameToRemove = new Game();
+                for(Game gameIterator : gamesList)
+                {
+                    if (gameIterator.Key == game.Key) {
+                        gameToRemove = gameIterator;
+                        break;
+                    }
+                }
 
-                // Display a toast.
-                //Toast.makeText(MainActivity.this, R.string.update_failed, Toast.LENGTH_SHORT).show();
+                gamesList.remove(gameToRemove);
+                gamesList.add(game);
+                updateGamesListView(gamesList);
+            }
+            else if (description == GameService.OLD_GAME_REMOVED){
+                // Find index of old game in existing list
+                Game gameToRemove = new Game();
+                for(Game gameIterator : gamesList)
+                {
+                    if (gameIterator.Key == game.Key) {
+                        gameToRemove = gameIterator;
+                        break;
+                    }
+                }
+
+                gamesList.remove(gameToRemove);
             }
         }
     };
