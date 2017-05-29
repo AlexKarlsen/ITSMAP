@@ -36,6 +36,7 @@ public class GameService extends Service {
     private static final String GAMES_LEVEL = "Games";
     private static final String HOLES_LEVEL = "Holes";
     private static final String PLAYER_LEVEL = "Players";
+    private static final String SCORES_LEVEL = "Scores";
 
     // Broadcasting Tags
     public static final String BROADCAST_GAME_SERVICE_RESULT = "BROADCAST_GAME_SERVICE_RESULT";
@@ -187,7 +188,7 @@ public class GameService extends Service {
     // Add a score to a hole
     public void addScoreToHole(String gameKey, String holeIndex, Player player, long value){
         Score score = new Score(player, value);
-        mDatabase.child(GAMES_LEVEL).child(gameKey).child(HOLES_LEVEL).child(holeIndex).child(player.UUID).setValue(score);
+        mDatabase.child(GAMES_LEVEL).child(gameKey).child(HOLES_LEVEL).child(holeIndex).child(SCORES_LEVEL).child(player.UUID).setValue(score);
     }
 
     // Broadcasting events to the activity, activities need to bind to service and implement onRecieve()
