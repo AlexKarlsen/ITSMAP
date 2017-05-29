@@ -1,8 +1,10 @@
 package com.example.alex.pubgolf;
 
+import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -19,7 +21,14 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
+import com.example.alex.pubgolf.Models.Game;
+import com.example.alex.pubgolf.Models.Hole;
+
+import java.util.ArrayList;
+
 public class GameNavigationActivity extends AppCompatActivity {
+
+    Game game;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -43,6 +52,7 @@ public class GameNavigationActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -53,6 +63,27 @@ public class GameNavigationActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+
+        // Handle intent.
+        Intent intent = getIntent();
+        if (intent != null) {
+            handleStartWithIntent(intent);
+        }
+    }
+
+    protected void handleStartWithIntent(Intent intent) {
+        game = (Game) intent.getExtras().getSerializable(GameListActivity.EXTRA_GAME);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar == null) return;
+        actionBar.setTitle(game.Title);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     /**
@@ -65,6 +96,8 @@ public class GameNavigationActivity extends AppCompatActivity {
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
 
+        Game game;
+
         public GameFragment() {
         }
 
@@ -72,8 +105,9 @@ public class GameNavigationActivity extends AppCompatActivity {
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static GameFragment newInstance(int sectionNumber) {
+        public static GameFragment newInstance(int sectionNumber, Game game) {
             GameFragment fragment = new GameFragment();
+            fragment.game = game;
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
             fragment.setArguments(args);
@@ -83,10 +117,27 @@ public class GameNavigationActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_game_navigation, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-            return rootView;
+
+            int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
+
+            if (sectionNumber == 1) {
+
+                // Game details section.
+
+                View rootView = inflater.inflate(R.layout.fragment_game_details, container, false);
+                TextView textView = (TextView) rootView.findViewById(R.id.gameDescriptionLabel);
+                textView.setText(game.Description);
+                return rootView;
+            }
+            else {
+
+                // Scoreboard section.
+
+                View rootView = inflater.inflate(R.layout.fragment_game_navigation, container, false);
+                TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+                textView.setText(getString(R.string.section_format, sectionNumber));
+                return rootView;
+            }
         }
     }
 
@@ -104,7 +155,7 @@ public class GameNavigationActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return GameFragment.newInstance(position + 1);
+            return GameFragment.newInstance(position + 1, game);
         }
 
         @Override
