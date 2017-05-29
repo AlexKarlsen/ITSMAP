@@ -95,9 +95,8 @@ public class GameListActivity extends AppCompatActivity {
             // Check if the service was successful.
             String description = intent.getStringExtra(GameService.EXTRA_DESCRIPTION);
             Game game = (Game)intent.getSerializableExtra(GameService.EXTRA_GAME);
-            Log.d("Description", description);
 
-            if (description == "New Game added") {
+            if (description == GameService.NEW_GAME_ADDED) {
                 gamesList.add(game);
                 updateGamesListView(gamesList);
             } else {
