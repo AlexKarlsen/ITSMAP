@@ -2,4 +2,8 @@
     <string name="app_name">Pub Golf</string>
     <string name="facebook_app_id">596137890564752</string>
     <string name="fb_login_protocol_scheme">fb596137890564752</string>
+    <string name="title_activity_game_navigation">GameNavigationActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="title_activity_main_temp">MainTempActivity</string>
 </resources>
