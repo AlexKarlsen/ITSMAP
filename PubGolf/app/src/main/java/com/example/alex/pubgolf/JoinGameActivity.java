@@ -59,7 +59,7 @@ public class JoinGameActivity extends AppCompatActivity {
                 if (intent.getBooleanExtra(GameService.EXTRA_ADD_SUCCESS, false) == false) {
                     // Display a toast to the user.
                     //Context context = getApplicationContext();
-                    String text = "Game id invalid"; // TODO: Localize text.
+                    String text = "Game id is invalid, or you have already joined"; // TODO: Localize text.
                     Toast toast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
                     toast.show();
                 }

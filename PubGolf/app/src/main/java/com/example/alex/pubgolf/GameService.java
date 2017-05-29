@@ -136,26 +136,32 @@ public class GameService extends Service {
     }
 
     // Add a user to a Game
-    public void addPlayerToGame(final String gameKey, String UUID, String name){
+    public void addPlayerToGame(final String gameKey, final String UUID, String name){
         final Player player = new Player(UUID, name);
-        boolean success;
 
+        // Check db to see if game exists and if player has already joined it
         mDatabase.child(GAMES_LEVEL).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 Intent broadcastIntent = new Intent();
                 broadcastIntent.setAction(BROADCAST_ADD_USER);
 
+                // Check if game exists in firebase
                 if (snapshot.hasChild(gameKey)) {
-                    // Should check if player is already in the game
-                    mDatabase.child(GAMES_LEVEL).child(gameKey).child(PLAYER_LEVEL).push().setValue(player);
+                    // Check if player has already joined game and join
+                    if (!snapshot.child(gameKey).child(PLAYER_LEVEL).hasChild(UUID)) {
+                        mDatabase.child(GAMES_LEVEL).child(gameKey).child(PLAYER_LEVEL).child(UUID).setValue(player);
+                        broadcastIntent.putExtra(EXTRA_ADD_SUCCESS, true);
+                    }
+                    else    //Add failed; tell user
+                        broadcastIntent.putExtra(EXTRA_ADD_SUCCESS, false);
 
-                    broadcastIntent.putExtra(EXTRA_ADD_SUCCESS, true);
+
                 }
-                else {
+                else {  //Add failed; tell user
                     broadcastIntent.putExtra(EXTRA_ADD_SUCCESS, false);
                 }
-                Log.d(LOG, "Broadcasting from Game Service");
+                Log.d(LOG, "Broadcasting join game result from Game Service");
                 LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(broadcastIntent);
             }
 
