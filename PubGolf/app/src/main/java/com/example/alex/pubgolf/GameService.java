@@ -15,6 +15,7 @@ import android.util.Log;
 import com.example.alex.pubgolf.Models.Game;
 import com.example.alex.pubgolf.Models.Hole;
 import com.example.alex.pubgolf.Models.Player;
+import com.facebook.Profile;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -39,6 +40,9 @@ public class GameService extends Service {
     // Broadcasting Tags
     public static final String BROADCAST_GAME_SERVICE_RESULT = "BROADCAST_GAME_SERVICE_RESULT";
     public static final String BROADCAST_ADD_USER = "BROADCAST_ADD_USER";
+
+    // BroadcastTaskResult tags
+    public static final String NEW_GAME_ADDED = "NEW_GAME_ADDED";
 
     public static final String EXTRA_DESCRIPTION = "EXTRA_DESCRIPTION";
     public static final String EXTRA_GAME = "EXTRA_GAME";
@@ -77,10 +81,13 @@ public class GameService extends Service {
 
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    Log.d(LOG, "Received new game");
-                    Game newGame = dataSnapshot.getValue(Game.class);
-                    // Inform activity or list view
-                    broadcastTaskResult("New Game added", newGame);
+                    // Check if user is a joined player of the received game
+                    if (dataSnapshot.child(PLAYER_LEVEL).hasChild(Profile.getCurrentProfile().getId())) {
+                        Log.d(LOG, "Received new game");
+                        Game newGame = dataSnapshot.getValue(Game.class);
+                        // Inform activity or list view
+                        broadcastTaskResult(NEW_GAME_ADDED, newGame);
+                    }
                 }
 
                 @Override
@@ -136,26 +143,32 @@ public class GameService extends Service {
     }
 
     // Add a user to a Game
-    public void addPlayerToGame(final String gameKey, String UUID, String name){
+    public void addPlayerToGame(final String gameKey, final String UUID, String name){
         final Player player = new Player(UUID, name);
-        boolean success;
 
+        // Check db to see if game exists and if player has already joined it
         mDatabase.child(GAMES_LEVEL).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 Intent broadcastIntent = new Intent();
                 broadcastIntent.setAction(BROADCAST_ADD_USER);
 
+                // Check if game exists in firebase
                 if (snapshot.hasChild(gameKey)) {
-                    // Should check if player is already in the game
-                    mDatabase.child(GAMES_LEVEL).child(gameKey).child(PLAYER_LEVEL).push().setValue(player);
+                    // Check if player has already joined game and join
+                    if (!snapshot.child(gameKey).child(PLAYER_LEVEL).hasChild(UUID)) {
+                        mDatabase.child(GAMES_LEVEL).child(gameKey).child(PLAYER_LEVEL).child(UUID).setValue(player);
+                        broadcastIntent.putExtra(EXTRA_ADD_SUCCESS, true);
+                    }
+                    else    //Add failed; tell user
+                        broadcastIntent.putExtra(EXTRA_ADD_SUCCESS, false);
 
-                    broadcastIntent.putExtra(EXTRA_ADD_SUCCESS, true);
+
                 }
-                else {
+                else {  //Add failed; tell user
                     broadcastIntent.putExtra(EXTRA_ADD_SUCCESS, false);
                 }
-                Log.d(LOG, "Broadcasting from Game Service");
+                Log.d(LOG, "Broadcasting join game result from Game Service");
                 LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(broadcastIntent);
             }
 
