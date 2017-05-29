@@ -15,6 +15,7 @@ import android.util.Log;
 import com.example.alex.pubgolf.Models.Game;
 import com.example.alex.pubgolf.Models.Hole;
 import com.example.alex.pubgolf.Models.Player;
+import com.example.alex.pubgolf.Models.Score;
 import com.facebook.Profile;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -25,7 +26,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 public class GameService extends Service {
 
@@ -182,6 +182,12 @@ public class GameService extends Service {
     // Add hole to an existing game
     public void addHoleToExistingGame(String gameKey, Hole hole){
         mDatabase.child(GAMES_LEVEL).child(gameKey).child(HOLES_LEVEL).setValue(hole);
+    }
+
+    // Add a score to a hole
+    public void addScoreToHole(String gameKey, String holeIndex, Player player, long value){
+        Score score = new Score(player, value);
+        mDatabase.child(GAMES_LEVEL).child(gameKey).child(HOLES_LEVEL).child(holeIndex).child(player.UUID).setValue(score);
     }
 
     // Broadcasting events to the activity, activities need to bind to service and implement onRecieve()
