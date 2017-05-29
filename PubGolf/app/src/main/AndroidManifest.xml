@@ -49,7 +49,7 @@
 
         <activity android:name=".GameListActivity" />
         <activity android:name=".EditHoleActivity" />
-        <activity android:name=".JoinGameActivity"></activity>
+        <activity android:name=".JoinGameActivity" />
     </application>
 
 </manifest>
