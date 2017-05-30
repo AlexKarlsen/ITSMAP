@@ -10,5 +10,22 @@
     <string name="select_score">Select Score</string>
     <string name="done">done</string>
     <string name="add_score_to_hole">Add Score to Hole</string>
-    <string name="continue">Continue</string>
+    <string name="continue_">Continue</string>
+    <string name="edit_course">Edit Course</string>
+    <string name="add_hole">Add Hole</string>
+    <string name="edit_game">Edit Game</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="date">Date</string>
+    <string name="edit_hole">Edit Hole</string>
+    <string name="name">Name</string>
+    <string name="time">Time</string>
+    <string name="hole_number">Hole Number</string>
+    <string name="add_score">Add Score</string>
+    <string name="game_id" >Game Id</string>
+    <string name="join">Join</string>
+    <string name="host_game">Host Game</string>
+    <string name="join_game" >Join Game</string>
+    <string name="state">State</string>
+    <string name="created">Created</string>
 </resources>
