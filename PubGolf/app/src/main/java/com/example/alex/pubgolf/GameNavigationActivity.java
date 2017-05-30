@@ -29,6 +29,7 @@ import com.example.alex.pubgolf.Models.Game;
 import com.example.alex.pubgolf.Models.Hole;
 import com.example.alex.pubgolf.Models.Player;
 import com.example.alex.pubgolf.Models.Score;
+import com.example.alex.pubgolf.Models.Scoreboard;
 
 import java.util.ArrayList;
 
@@ -165,20 +166,9 @@ public class GameNavigationActivity extends AppCompatActivity {
 
                 View rootView = inflater.inflate(R.layout.fragment_game_scoreboard, container, false);
 
-                if (game.Holes != null) {
+                if (game != null) {
 
-                    Player p1 = new Player("", "Paul Denino");
-                    Score s1 = new Score(p1, (long) 1);
-                    Player p2 = new Player("", "Enza Denino");
-                    Score s2 = new Score(p2, (long) 4);
-                    Player p3 = new Player("", "M. Andy");
-                    Score s3 = new Score(p3, (long) 9);
-
-                    ArrayList<Score> scoreList = new ArrayList<Score>();
-                    scoreList.add(s1);
-                    scoreList.add(s2);
-                    scoreList.add(s3);
-
+                    ArrayList<Score> scoreList = Scoreboard.calculateScoresForGame(game);
                     ListView scoreboardListView = (ListView) rootView.findViewById(R.id.scoreboardListView);
                     ScoreArrayAdapter adapter = new ScoreArrayAdapter(getActivity(), R.layout.scoreboard_list_item, scoreList);
                     scoreboardListView.setAdapter(adapter);

@@ -11,7 +11,7 @@ import java.util.Set;
 
 public class Scoreboard {
 
-    static ArrayList<Score> calculateScoresForGame(Game game) {
+    public static ArrayList<Score> calculateScoresForGame(Game game) {
 
         HashMap<String, Score> hashMap = new HashMap<>();
 
@@ -25,16 +25,22 @@ public class Scoreboard {
         // Aggregate scores for each hole, put maxScore if score is missing.
         for (Hole hole : game.Holes) {
 
+            // Do not calculate score for holes in the future.
+            if (game.State != Game.GameState.Completed && hole.Index >= game.HoleIndex) {
+                continue;
+            }
+
             Set<String> remainingKeys = game.Players.keySet();
 
-            // Add all registered scores.
-            for (Score score : hole.Scores.values()) {
+            if (hole.Scores != null) {
+                for (Score score : hole.Scores.values()) {
 
-                String playerId = score.Player.UUID;
-                remainingKeys.remove(playerId);
+                    String playerId = score.Player.UUID;
+                    remainingKeys.remove(playerId);
 
-                Score playerScore = hashMap.get(playerId);
-                playerScore.Value += score.Value;
+                    Score playerScore = hashMap.get(playerId);
+                    playerScore.Value += score.Value;
+                }
             }
 
             // Add max score for all unregistered scores.
