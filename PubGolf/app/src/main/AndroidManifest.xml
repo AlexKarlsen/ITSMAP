@@ -53,8 +53,10 @@
         <activity
             android:name=".GameNavigationActivity"
             android:label="@string/title_activity_game_navigation"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".AddScoreActivity"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".HoleDetailActivity" />
+        <activity android:name=".AddScoreActivity" />
+
     </application>
 
 </manifest>
