@@ -11,10 +11,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.alex.pubgolf.Models.Game;
+import com.example.alex.pubgolf.Models.Score;
 import com.example.alex.pubgolf.R;
 import com.facebook.Profile;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Created by Emil- on 23/05/2017.
@@ -29,6 +32,28 @@ public class GameArrayAdapter extends ArrayAdapter {
     public GameArrayAdapter(Context context, int cellResourceId, ArrayList<Game> objects) {
         super(context, cellResourceId, objects);
         this.objects = objects;
+
+        // Sort scores by value (descending).
+        Collections.sort(this.objects, new Comparator<Game>() {
+            @Override
+            public int compare(Game lhs, Game rhs) {
+
+                if (lhs.State == Game.GameState.InProgress) {
+                    if (rhs.State == Game.GameState.InProgress) return 0; // Equal
+                    else return -1; // Less than
+                }
+                else if (lhs.State == Game.GameState.Created) {
+                    if (rhs.State == Game.GameState.Created) return 0; // Equal
+                    if (rhs.State == Game.GameState.InProgress) return 1; // Greater than
+                    return -1; // Less than
+                }
+                else {
+                    if (rhs.State == Game.GameState.Completed || rhs.State == Game.GameState.Cancelled) return 0; // Equal;
+                    return 1; // Greater than.
+                }
+            }
+        });
+
         this.cellResourceId = cellResourceId;
     }
 
