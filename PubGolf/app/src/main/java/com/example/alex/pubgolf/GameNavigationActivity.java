@@ -248,6 +248,23 @@ public class GameNavigationActivity extends AppCompatActivity {
                 TextView dateTextView = (TextView) view.findViewById(R.id.gameDateLabel);
                 dateTextView.setText(game.GetStartTimeAsTimestamp().toString());
 
+                TextView stateTextView = (TextView) view.findViewById(R.id.stateTextView);
+                switch (game.State) {
+                    case Created:
+                        stateTextView.setText("Created");
+                        break;
+                    case InProgress:
+                        stateTextView.setText("In Progress");
+                        break;
+                    case Completed:
+                        stateTextView.setText("Completed");
+                        break;
+                    case Cancelled:
+                        stateTextView.setText("Cancelled");
+                        break;
+                }
+
+
             } else if (sectionNumber == 1) {
 
                 // Course section.

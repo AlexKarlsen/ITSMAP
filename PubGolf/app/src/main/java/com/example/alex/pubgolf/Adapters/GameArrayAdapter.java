@@ -68,7 +68,13 @@ public class GameArrayAdapter extends ArrayAdapter {
                 titleTextView.setTypeface(null, Typeface.BOLD);
                 timeTextView.setTypeface(null, Typeface.BOLD);
                 outerLinearLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorHighlight));
+
+            } else if (info.State == Game.GameState.Cancelled || info.State == Game.GameState.Completed) {
+
+                // Grey out the background if the game is done.
+                outerLinearLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorNeutral));
             }
+
             // Write "Hosting" in hostingTextView if user is host
             if (Profile.getCurrentProfile().getId().equals(info.Owner.UUID)) // if host
                 hostingTextView.setText("Hosting");
