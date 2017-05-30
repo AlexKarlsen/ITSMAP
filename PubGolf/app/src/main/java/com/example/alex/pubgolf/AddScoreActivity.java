@@ -153,20 +153,15 @@ public class AddScoreActivity extends AppCompatActivity {
 
     private void initializeSubViews(){
         activityTitleTextView = (TextView) findViewById(R.id.addScoreActivityTitleTextView);
+        activityTitleTextView.setText(getString(R.string.add_score_to_hole)+ " " + (hole.Index+1) + " " + "'" + hole.Name + "'");
 
         Intent gameServiceIntent = new Intent(this, GameService.class);
         startService(gameServiceIntent);
         bindService(gameServiceIntent, connection, Context.BIND_IMPORTANT);
 
         enterScoreTextView = (TextView) findViewById(R.id.enterScoreTextView);
-        enterScoreTextView.setText(getString(R.string.select_score));
-
         doneButton = (Button) findViewById(R.id.doneButton);
-        doneButton.setText(getString(R.string.done));
-
         playerSpinner = (Spinner) findViewById(R.id.playersSpinner);
-
-        activityTitleTextView.setText(getString(R.string.add_score_to_hole)+ " " + (hole.Index+1) + " " + "'" + hole.Name + "'");
 
         if(selectedPlayer == null){
             doneButton.setEnabled(false);
