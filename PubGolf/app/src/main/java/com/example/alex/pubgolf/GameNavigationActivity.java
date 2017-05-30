@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -149,6 +150,19 @@ public class GameNavigationActivity extends AppCompatActivity {
 
                 View rootView = inflater.inflate(R.layout.fragment_game_course, container, false);
                 view = rootView;
+
+                ((ListView) view.findViewById(R.id.holesListView)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    public void onItemClick(AdapterView<?> list, View v, int pos, long id) {
+
+                        // Pass the selected hole index and game to the score activity.
+                        int selectedHoleIndex = pos;
+                        if (selectedHoleIndex <= game.HoleIndex) {
+
+                            // TODO: Start score activity...
+                        }
+                    }
+                });
+
                 updateView();
                 return rootView;
 
@@ -231,6 +245,8 @@ public class GameNavigationActivity extends AppCompatActivity {
 
                     ListView holesListView = (ListView) view.findViewById(R.id.holesListView);
                     HoleArrayAdapter adapter = new HoleArrayAdapter(getActivity(), R.layout.hole_info_list_item, holesList);
+                    FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.advanceHoleIndexFAB);
+
                     holesListView.setAdapter(adapter);
                 }
 
