@@ -1,10 +1,14 @@
 package com.example.alex.pubgolf;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -102,12 +106,13 @@ public class GameNavigationActivity extends AppCompatActivity {
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
+        private int sectionNumber;
+        private View view;
 
         Game game;
         ArrayList<Hole> holesList;
 
-        public GameFragment() {
-        }
+        public GameFragment() { }
 
         /**
          * Returns a new instance of this fragment for the given section
@@ -126,20 +131,15 @@ public class GameNavigationActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
 
-            int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
+            sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
 
             if (sectionNumber == 0) {
 
                 // Game details section.
 
                 View rootView = inflater.inflate(R.layout.fragment_game_details, container, false);
-
-                TextView descriptionTextView = (TextView) rootView.findViewById(R.id.gameDescriptionLabel);
-                descriptionTextView.setText(game.Description);
-
-                TextView dateTextView = (TextView) rootView.findViewById(R.id.gameDateLabel);
-                dateTextView.setText(game.GetStartTimeAsTimestamp().toString());
-
+                view = rootView;
+                updateView();
                 return rootView;
 
             } else if (sectionNumber == 1) {
@@ -147,17 +147,8 @@ public class GameNavigationActivity extends AppCompatActivity {
                 // Course section.
 
                 View rootView = inflater.inflate(R.layout.fragment_game_course, container, false);
-
-                if (game.Holes != null) {
-
-                    holesList = new ArrayList<Hole>();
-                    holesList.addAll(game.Holes);
-
-                    ListView holesListView = (ListView) rootView.findViewById(R.id.holesListView);
-                    HoleArrayAdapter adapter = new HoleArrayAdapter(getActivity(), R.layout.hole_info_list_item, holesList);
-                    holesListView.setAdapter(adapter);
-                }
-
+                view = rootView;
+                updateView();
                 return rootView;
 
             } else {
@@ -165,16 +156,89 @@ public class GameNavigationActivity extends AppCompatActivity {
                 // Scoreboard section.
 
                 View rootView = inflater.inflate(R.layout.fragment_game_scoreboard, container, false);
+                view = rootView;
+                updateView();
+                return rootView;
+            }
+        }
+
+        @Override
+        public void onCreate(@Nullable Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+
+            // Register broadcast receivers.
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(GameService.BROADCAST_GAME_SERVICE_RESULT);
+            LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onGameServiceResult, filter);
+        }
+
+        @Override
+        public void onDestroy() {
+            super.onDestroy();
+
+            LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onGameServiceResult);
+        }
+
+        private BroadcastReceiver onGameServiceResult = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                String description = intent.getStringExtra(GameService.EXTRA_DESCRIPTION);
+
+                if (description.equals(GameService.OLD_GAME_CHANGED)) {
+
+                    Game receivedGame = (Game) intent.getSerializableExtra(GameService.EXTRA_GAME);
+
+                    // Only update if the updated game is the one currently displayed.
+                    if (game != null && receivedGame != null) {
+                        if (game.Key.equals(receivedGame.Key)) {
+                            game = receivedGame;
+                            updateView();
+                        }
+                    }
+                }
+            }
+        };
+
+        private void updateView() {
+
+            if (view == null) return;
+
+            if (sectionNumber == 0) {
+
+                // Game details section.
+
+                TextView descriptionTextView = (TextView) view.findViewById(R.id.gameDescriptionLabel);
+                descriptionTextView.setText(game.Description);
+
+                TextView dateTextView = (TextView) view.findViewById(R.id.gameDateLabel);
+                dateTextView.setText(game.GetStartTimeAsTimestamp().toString());
+
+            } else if (sectionNumber == 1) {
+
+                // Course section.
+
+                if (game.Holes != null) {
+
+                    holesList = new ArrayList<Hole>();
+                    holesList.addAll(game.Holes);
+
+                    ListView holesListView = (ListView) view.findViewById(R.id.holesListView);
+                    HoleArrayAdapter adapter = new HoleArrayAdapter(getActivity(), R.layout.hole_info_list_item, holesList);
+                    holesListView.setAdapter(adapter);
+                }
+
+            } else {
+
+                // Scoreboard section.
 
                 if (game != null) {
 
                     ArrayList<Score> scoreList = Scoreboard.calculateScoresForGame(game);
-                    ListView scoreboardListView = (ListView) rootView.findViewById(R.id.scoreboardListView);
+                    ListView scoreboardListView = (ListView) view.findViewById(R.id.scoreboardListView);
                     ScoreArrayAdapter adapter = new ScoreArrayAdapter(getActivity(), R.layout.scoreboard_list_item, scoreList);
                     scoreboardListView.setAdapter(adapter);
                 }
-
-                return rootView;
             }
         }
     }
