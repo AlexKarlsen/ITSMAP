@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -57,14 +58,13 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
 
             @Override
-            public void onSuccess(LoginResult loginResult)
-            {
+            public void onSuccess(LoginResult loginResult) {
                 Log.d(TAG, "onSuccess:" + loginResult);
                 handleFacebookAccessToken(loginResult.getAccessToken());
             }
 
             @Override
-            public void onCancel(){
+            public void onCancel() {
                 Log.d(TAG, "facebook:onCancel");
             }
 
@@ -88,25 +88,35 @@ public class LoginActivity extends AppCompatActivity {
         });
         continueButton.setVisibility(View.GONE);
 
+        // Initialize access token tracker.
+        AccessTokenTracker accessTokenTracker = new AccessTokenTracker() {
+            @Override
+            protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
+                if (currentAccessToken == null) {
+                    continueButton.setVisibility(View.GONE);
+                } else {
+                    continueButton.setVisibility(View.VISIBLE);
+                }
+            }
+        };
+
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
 
                 FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
 
+                if (user != null) {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                    continueButton.setVisibility(View.VISIBLE);
-
                 } else {
-
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
-                    continueButton.setVisibility(View.GONE);
                 }
             }
         };
+
+        accessTokenTracker.startTracking();
     }
 
     @Override
@@ -116,6 +126,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
+
         Log.d(TAG, "handleFacebookAccessToken:" + token);
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
@@ -139,8 +150,6 @@ public class LoginActivity extends AppCompatActivity {
 
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            //Toast.makeText(FacebookLoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
-                            // updateUI(null);
                         }
                     }
                 });

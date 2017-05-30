@@ -16,7 +16,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:backgroundTint="@color/colorPrimary"
-        android:text="@string/done"
+        android:text="Done"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -26,15 +26,15 @@
         android:id="@+id/titleTextView"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
         android:gravity="center"
-        android:text="@string/edit_course"
+        android:text="Edit Course"
         android:textSize="24sp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent" />
 
     <ListView
         android:id="@+id/holeListView"
@@ -60,7 +60,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:backgroundTint="@color/colorNeutral"
-        android:text="@string/add_hole"
+        android:text="Add hole"
         app:layout_constraintBottom_toTopOf="@+id/doneButton"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
