@@ -70,10 +70,10 @@ public class ScoreArrayAdapter extends ArrayAdapter {
                 nameTextView.setText(score.Player.Name);
             }
             if (placementTextView != null) {
-                placementTextView.setText(position);
+                placementTextView.setText(String.valueOf(position + 1));
             }
             if (scoreTextView != null) {
-                scoreTextView.setText("score: " + score.Value);
+                scoreTextView.setText("score: " + String.valueOf(score.Value));
             }
         }
 
