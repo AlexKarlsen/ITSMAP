@@ -17,6 +17,7 @@ import com.example.alex.pubgolf.Models.Game;
 import com.example.alex.pubgolf.Models.Player;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,13 +37,15 @@ public class AddScoreActivity extends AppCompatActivity {
     List<Player> playerList;
     Map<String, Player> playerMap;
 
+    int holeIndex;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_score);
 
         activityTitleTextView = (TextView) findViewById(R.id.addScoreActivityTitleTextView);
-        activityTitleTextView.setText("Add a score for Hole #");
+
 
         enterScoreTextView = (TextView) findViewById(R.id.enterScoreTextView);
         enterScoreTextView.setText("Select Score");
@@ -56,6 +59,8 @@ public class AddScoreActivity extends AppCompatActivity {
         if (intent != null) {
             handleStartWithIntent(intent);
         }
+
+        activityTitleTextView.setText("Add a score for Hole " + holeIndex);
 
         // Test Array
         // String[] stringlist = new String[]{"Select A Player","Alex", "Emil", "Lasse"};
@@ -124,8 +129,10 @@ public class AddScoreActivity extends AppCompatActivity {
 
     protected void handleStartWithIntent(Intent intent) {
         Game game = (Game) intent.getExtras().getSerializable(EditGameActivity.EXTRA_GAME);
+        holeIndex = intent.getIntExtra(GameNavigationActivity.EXTRA_HOLE_INDEX,-1);
         if (game == null) return;
         if (game.Players != null) {
+            playerMap = new HashMap<>();
             playerMap.putAll(game.Players);
         }
     }

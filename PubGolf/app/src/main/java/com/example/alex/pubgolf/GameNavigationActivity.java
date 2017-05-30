@@ -4,26 +4,21 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
-import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -32,7 +27,6 @@ import com.example.alex.pubgolf.Adapters.HoleArrayAdapter;
 import com.example.alex.pubgolf.Adapters.ScoreArrayAdapter;
 import com.example.alex.pubgolf.Models.Game;
 import com.example.alex.pubgolf.Models.Hole;
-import com.example.alex.pubgolf.Models.Player;
 import com.example.alex.pubgolf.Models.Score;
 import com.example.alex.pubgolf.Models.Scoreboard;
 
@@ -40,6 +34,7 @@ import java.util.ArrayList;
 
 public class GameNavigationActivity extends AppCompatActivity {
 
+    public static final String EXTRA_HOLE_INDEX = "EXTRA_HOLE_INDEX";
     Game game;
 
     /**
@@ -157,8 +152,10 @@ public class GameNavigationActivity extends AppCompatActivity {
                         // Pass the selected hole index and game to the score activity.
                         int selectedHoleIndex = pos;
                         if (selectedHoleIndex <= game.HoleIndex) {
-
-                            // TODO: Start score activity...
+                            Intent addScoreIntent = new Intent(getContext(), AddScoreActivity.class);
+                            addScoreIntent.putExtra(GameService.EXTRA_GAME, game);
+                            addScoreIntent.putExtra(EXTRA_HOLE_INDEX, selectedHoleIndex);
+                            startActivity(addScoreIntent);
                         }
                     }
                 });
