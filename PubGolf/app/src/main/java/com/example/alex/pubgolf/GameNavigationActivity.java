@@ -23,12 +23,13 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.alex.pubgolf.Adapters.HoleArrayAdapter;
+import com.example.alex.pubgolf.Adapters.CourseArrayAdapter;
 import com.example.alex.pubgolf.Adapters.ScoreArrayAdapter;
 import com.example.alex.pubgolf.Models.Game;
 import com.example.alex.pubgolf.Models.Hole;
 import com.example.alex.pubgolf.Models.Score;
 import com.example.alex.pubgolf.Models.Scoreboard;
+import com.facebook.Profile;
 
 import java.util.ArrayList;
 
@@ -241,8 +242,22 @@ public class GameNavigationActivity extends AppCompatActivity {
                     holesList.addAll(game.Holes);
 
                     ListView holesListView = (ListView) view.findViewById(R.id.holesListView);
-                    HoleArrayAdapter adapter = new HoleArrayAdapter(getActivity(), R.layout.hole_info_list_item, holesList);
+                    CourseArrayAdapter adapter = new CourseArrayAdapter(getActivity(), R.layout.hole_info_list_item, holesList, game.HoleIndex, game.State);
+
+                    // Update the fab.
                     FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.advanceHoleIndexFAB);
+
+                    if (game.Owner.UUID == Profile.getCurrentProfile().getId()) {
+                        fab.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                                // TODO: Increment active hole index.
+                            }
+                        });
+                    } else {
+                        fab.setOnClickListener(null);
+                    }
 
                     holesListView.setAdapter(adapter);
                 }
