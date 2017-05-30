@@ -3,6 +3,7 @@ package com.example.alex.pubgolf.Models;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -30,7 +31,7 @@ public class Scoreboard {
                 continue;
             }
 
-            Set<String> remainingKeys = game.Players.keySet();
+            Set<String> remainingKeys = new HashSet<>(game.Players.keySet());
 
             if (hole.Scores != null) {
                 for (Score score : hole.Scores.values()) {
