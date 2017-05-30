@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Pub Golf</string>
+    <string name="select_a_player">Vælg en Spiller</string>
+    <string name="done">Færdig</string>
+    <string name="continue_">Fortsæt</string>
+</resources>

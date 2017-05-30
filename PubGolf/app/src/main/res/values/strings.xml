@@ -6,16 +6,26 @@
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_activity_main_temp">MainTempActivity</string>
-    <string-array name="score_values">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
-        <item>8</item>
-        <item>9</item>
-        <item>10</item>
-    </string-array>
+    <string name="select_a_player">Select A Player</string>
+    <string name="select_score">Select Score</string>
+    <string name="done">done</string>
+    <string name="add_score_to_hole">Add Score to Hole</string>
+    <string name="continue_">Continue</string>
+    <string name="edit_course">Edit Course</string>
+    <string name="add_hole">Add Hole</string>
+    <string name="edit_game">Edit Game</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="date">Date</string>
+    <string name="edit_hole">Edit Hole</string>
+    <string name="name">Name</string>
+    <string name="time">Time</string>
+    <string name="hole_number">Hole Number</string>
+    <string name="add_score">Add Score</string>
+    <string name="game_id" >Game Id</string>
+    <string name="join">Join</string>
+    <string name="host_game">Host Game</string>
+    <string name="join_game" >Join Game</string>
+    <string name="state">State</string>
+    <string name="created">Created</string>
 </resources>
