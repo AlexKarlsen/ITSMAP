@@ -81,6 +81,7 @@ public class GameService extends Service {
             started = true;
 
             // Listen for changes at Games level in Firebase
+            // https://firebase.google.com/docs/database/admin/retrieve-data
             mDatabase.child(GAMES_LEVEL).addChildEventListener(new ChildEventListener() {
 
                 @Override
@@ -132,6 +133,9 @@ public class GameService extends Service {
         }
         return START_STICKY;
     }
+
+    // Saving data to firebase is inspired by following link:
+    // https://firebase.google.com/docs/database/admin/save-data
 
     // Creates a new game and saves Firebase generated key to the locale instance of the game
     public void createNewGame(Game newGame){
