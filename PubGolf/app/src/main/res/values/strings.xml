@@ -28,4 +28,12 @@
     <string name="join_game" >Join Game</string>
     <string name="state">State</string>
     <string name="created">Created</string>
+    <string name="key">Key</string>
+    <string name="share_key">Share Key</string>
+    <string name="in_progress">In Progress</string>
+    <string name="completed">Completed</string>
+    <string name="cancelled">Cancelled</string>
+    <string name="details">Details</string>
+    <string name="course">Course</string>
+    <string name="scoreboard">Scoreboard</string>
 </resources>

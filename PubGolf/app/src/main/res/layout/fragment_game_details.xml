@@ -89,15 +89,15 @@
         android:id="@+id/keyTitleLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="21dp"
-        android:text="Key"
-        android:textColor="@android:color/black"
-        android:textSize="18sp"
-        android:layout_below="@+id/stateTextView"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/stateTextView"
+        android:layout_marginTop="21dp"
+        android:text="@string/key"
+        android:textColor="@android:color/black"
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/keyTextView"
@@ -115,9 +115,9 @@
         android:id="@+id/shareButton"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:text="Share key"
-        android:layout_marginTop="11dp"
         android:layout_below="@+id/keyTextView"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="11dp"
+        android:text="@string/share_key" />
 
 </RelativeLayout>

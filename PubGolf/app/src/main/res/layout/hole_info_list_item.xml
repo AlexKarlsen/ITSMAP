@@ -12,7 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="32dp"
         android:layout_weight="1"
-        android:text="Katrines Kaelder"
         android:textColor="@android:color/black"
         android:textSize="18sp" />
 
@@ -20,7 +19,6 @@
         android:id="@+id/descriptionTextView"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:layout_weight="1.48"
-        android:text="The first stop of the day is Katrines Kaelder where we'll get a drink. The first stop of the day is Katrines Kaelder where we'll get a drink." />
+        android:layout_weight="1.48" />
 
 </LinearLayout>
