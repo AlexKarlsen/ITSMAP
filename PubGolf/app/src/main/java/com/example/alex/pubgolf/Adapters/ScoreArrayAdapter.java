@@ -17,10 +17,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+/**
+ * Created by Lasse on 30/05/2017.
+ * Abstract: Array adapter for populating a list view with scores (for scoreboard).
+ */
+
 public class ScoreArrayAdapter extends ArrayAdapter {
 
     private ArrayList<Score> objects;
-
     private int cellResourceId;
 
     public ScoreArrayAdapter(Context context, int cellResourceId, ArrayList<Score> objects) {

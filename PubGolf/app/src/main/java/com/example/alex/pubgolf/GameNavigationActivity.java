@@ -64,8 +64,7 @@ public class GameNavigationActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
+        // Create the adapter that will return a fragment for each of the three primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
@@ -85,6 +84,7 @@ public class GameNavigationActivity extends AppCompatActivity {
     protected void handleStartWithIntent(Intent intent) {
         game = (Game) intent.getExtras().getSerializable(GameListActivity.EXTRA_GAME);
 
+        // Show the navigation button and game title in the toolbar.
         ActionBar actionBar = getSupportActionBar();
         if (actionBar == null) return;
         actionBar.setTitle(game.Title);
@@ -93,18 +93,17 @@ public class GameNavigationActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
+
+        // Go back when the back arrow is pressed.
         onBackPressed();
         return true;
     }
 
     /**
-     * A placeholder fragment containing a simple view.
+     * A fragment for displaying different game information.
      */
     public static class GameFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
+
         private static final String ARG_SECTION_NUMBER = "section_number";
         private int sectionNumber;
         private View view;
@@ -132,6 +131,8 @@ public class GameNavigationActivity extends AppCompatActivity {
                                  Bundle savedInstanceState) {
 
             sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
+
+            // Return a different view based on the section number.
 
             if (sectionNumber == 0) {
 
@@ -176,6 +177,7 @@ public class GameNavigationActivity extends AppCompatActivity {
         public void onDestroy() {
             super.onDestroy();
 
+            // Unregister broadcast receivers.
             LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onGameServiceResult);
         }
 
@@ -184,6 +186,8 @@ public class GameNavigationActivity extends AppCompatActivity {
             public void onReceive(Context context, Intent intent) {
 
                 String description = intent.getStringExtra(GameService.EXTRA_DESCRIPTION);
+
+                // Only react on game change notifications.
 
                 if (description.equals(GameService.OLD_GAME_CHANGED)) {
 
@@ -201,6 +205,8 @@ public class GameNavigationActivity extends AppCompatActivity {
         };
 
         private void updateView() {
+
+            // Updates the state of the view.
 
             if (view == null) return;
 
@@ -255,6 +261,7 @@ public class GameNavigationActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
+
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
             return GameFragment.newInstance(position, game);
@@ -262,12 +269,14 @@ public class GameNavigationActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
+
             // Show 3 total pages.
             return 3;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
+
             switch (position) {
                 case 0:
                     return "Details";
@@ -276,6 +285,7 @@ public class GameNavigationActivity extends AppCompatActivity {
                 case 2:
                     return "Scoreboard";
             }
+
             return null;
         }
     }
