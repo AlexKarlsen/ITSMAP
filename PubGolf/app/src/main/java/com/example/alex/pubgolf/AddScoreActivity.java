@@ -1,8 +1,12 @@
 package com.example.alex.pubgolf;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,10 +20,10 @@ import android.widget.TextView;
 import com.example.alex.pubgolf.Models.Game;
 import com.example.alex.pubgolf.Models.Hole;
 import com.example.alex.pubgolf.Models.Player;
+import com.example.alex.pubgolf.Models.Score;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class AddScoreActivity extends AppCompatActivity {
@@ -35,8 +39,13 @@ public class AddScoreActivity extends AppCompatActivity {
     TextView enterScoreTextView;
     Button doneButton;
 
-    List<Player> playerList;
+    GameService gameService;
+    Boolean bound = false;
+    Game game;
+    Player selectedPlayer = null;
+
     Map<String, Player> playerMap;
+
 
     Hole hole;
 
@@ -47,12 +56,28 @@ public class AddScoreActivity extends AppCompatActivity {
 
         activityTitleTextView = (TextView) findViewById(R.id.addScoreActivityTitleTextView);
 
+        Intent gameServiceIntent = new Intent(this, GameService.class);
+        startService(gameServiceIntent);
+        bindService(gameServiceIntent, connection, Context.BIND_IMPORTANT);
 
         enterScoreTextView = (TextView) findViewById(R.id.enterScoreTextView);
         enterScoreTextView.setText("Select Score");
 
         doneButton = (Button) findViewById(R.id.doneButton);
         doneButton.setText("Done");
+
+        if(selectedPlayer == null){
+            doneButton.setEnabled(false);
+        }
+
+        doneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gameService.addScoreToHole(game.Key, String.valueOf(hole.Index), selectedPlayer, scorePicker.getValue());
+                setResult(RESULT_OK);
+                finish();
+            }
+        });
 
         playerSpinner = (Spinner) findViewById(R.id.playersSpinner);
 
@@ -61,8 +86,9 @@ public class AddScoreActivity extends AppCompatActivity {
             handleStartWithIntent(intent);
         }
 
-        activityTitleTextView.setText("Add a score for Hole " + (hole.Index+1));
-        
+        activityTitleTextView.setText("Add a score for Hole " + (hole.Index+1) + " " + "'"+hole.Name+"'");
+
+
         ArrayList<String> playerNames = new ArrayList<>();
         //Hint text
         playerNames.add("Select A Player");
@@ -109,7 +135,18 @@ public class AddScoreActivity extends AppCompatActivity {
         playerSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedItemText = (String) parent.getItemAtPosition(position);
+                // Position 0 is a hint - return so no player is being set
+                if(position == 0) return;
+                selectedPlayer = new Player();
+                for (Player player: playerMap.values()) {
+                    if (player.Name == (String) parent.getItemAtPosition(position))
+                    {
+                        selectedPlayer = player;
+                        doneButton.setEnabled(true);
+                        break;
+                    }
+                }
+
                 // If user change the default selection
                 // First item is disable and it is used for hint
                 if(position > 0){
@@ -129,13 +166,43 @@ public class AddScoreActivity extends AppCompatActivity {
     }
 
     protected void handleStartWithIntent(Intent intent) {
-        Game game = (Game) intent.getExtras().getSerializable(EditGameActivity.EXTRA_GAME);
+        game = (Game) intent.getExtras().getSerializable(EditGameActivity.EXTRA_GAME);
         hole = (Hole) intent.getExtras().getSerializable(GameNavigationActivity.EXTRA_HOLE);
         if (game == null) return;
         if (game.Players != null) {
             playerMap = new HashMap<>();
             playerMap.putAll(game.Players);
+
+            if (hole.Scores != null) {
+                for (Score score : hole.Scores.values()) {
+
+                    String playerId = score.Player.UUID;
+                    playerMap.remove(playerId);
+                }
+            }
         }
     }
+
+    // Modified from: https://developer.android.com/guide/components/bound-services.html#Binder
+    private ServiceConnection connection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+
+            // Cast the IBinder and get WeatherInfoService instance.
+            GameService.GameServiceBinder binder = (GameService.GameServiceBinder) service;
+            gameService = binder.getService();
+            bound = true;
+
+            // Update the views with data from the service.
+            if (gameService != null) {
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            bound = false;
+        }
+    };
 }
 
