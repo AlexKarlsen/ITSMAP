@@ -115,6 +115,11 @@ public class LoginActivity extends AppCompatActivity {
         };
 
         accessTokenTracker.startTracking();
+
+        // Check if the user is logged in (^:
+        if (loginButton.getText().length() < 10) {
+            continueButton.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
