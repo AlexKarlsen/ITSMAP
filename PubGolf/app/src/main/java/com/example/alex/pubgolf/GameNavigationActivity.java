@@ -35,8 +35,6 @@ import com.example.alex.pubgolf.Models.Score;
 import com.example.alex.pubgolf.Models.Scoreboard;
 import com.facebook.Profile;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
 public class GameNavigationActivity extends AppCompatActivity {
@@ -257,16 +255,16 @@ public class GameNavigationActivity extends AppCompatActivity {
                 TextView stateTextView = (TextView) view.findViewById(R.id.stateTextView);
                 switch (game.State) {
                     case Created:
-                        stateTextView.setText("Created");
+                        stateTextView.setText(getString(R.string.created));
                         break;
                     case InProgress:
-                        stateTextView.setText("In Progress");
+                        stateTextView.setText(getString(R.string.in_progress));
                         break;
                     case Completed:
-                        stateTextView.setText("Completed");
+                        stateTextView.setText(getString(R.string.completed));
                         break;
                     case Cancelled:
-                        stateTextView.setText("Cancelled");
+                        stateTextView.setText(getString(R.string.cancelled));
                         break;
                 }
 
@@ -399,11 +397,11 @@ public class GameNavigationActivity extends AppCompatActivity {
 
             switch (position) {
                 case 0:
-                    return "Details";
+                    return getString(R.string.details);
                 case 1:
-                    return "Course";
+                    return getString(R.string.course);
                 case 2:
-                    return "Scoreboard";
+                    return getString(R.string.scoreboard);
             }
 
             return null;
