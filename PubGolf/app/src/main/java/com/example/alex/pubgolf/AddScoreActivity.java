@@ -77,11 +77,12 @@ public class AddScoreActivity extends AppCompatActivity {
     private void initializeSpinner() {
         ArrayList<String> playerNames = new ArrayList<>();
         //Hint text
-        playerNames.add("Select A Player");
+        playerNames.add(getString(R.string.select_a_player));
         for (Player player : playerMap.values()) playerNames.add(player.Name);
 
         // Create an ArrayAdapter using the string array playerNames
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, playerNames){
+
             @Override
             public boolean isEnabled(int position){
                 if(position == 0)
@@ -158,14 +159,14 @@ public class AddScoreActivity extends AppCompatActivity {
         bindService(gameServiceIntent, connection, Context.BIND_IMPORTANT);
 
         enterScoreTextView = (TextView) findViewById(R.id.enterScoreTextView);
-        enterScoreTextView.setText("Select Score");
+        enterScoreTextView.setText(getString(R.string.select_score));
 
         doneButton = (Button) findViewById(R.id.doneButton);
-        doneButton.setText("Done");
+        doneButton.setText(getString(R.string.done));
 
         playerSpinner = (Spinner) findViewById(R.id.playersSpinner);
 
-        activityTitleTextView.setText("Add a score for Hole " + (hole.Index+1) + " " + "'"+hole.Name+"'");
+        activityTitleTextView.setText(getString(R.string.add_score_to_hole)+ " " + (hole.Index+1) + " " + "'" + hole.Name + "'");
 
         if(selectedPlayer == null){
             doneButton.setEnabled(false);

@@ -119,8 +119,17 @@ public class GameListActivity extends AppCompatActivity {
 
             if (description == GameService.NEW_GAME_ADDED) {
 
-                gamesList.add(game);
-                updateGamesListView(gamesList);
+                boolean shouldAdd = true;
+                for (Game oldGame : gamesList) {
+                    if (oldGame.Key.equals(game.Key)) {
+                        shouldAdd = false;
+                        break;
+                    }
+                }
+                if (shouldAdd) {
+                    gamesList.add(game);
+                    updateGamesListView(gamesList);
+                }
             }
             else if (description == GameService.OLD_GAME_CHANGED) {
 
