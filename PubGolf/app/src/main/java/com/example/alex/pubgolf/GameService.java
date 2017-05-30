@@ -41,6 +41,7 @@ public class GameService extends Service {
     // Broadcasting Tags
     public static final String BROADCAST_GAME_SERVICE_RESULT = "BROADCAST_GAME_SERVICE_RESULT";
     public static final String BROADCAST_ADD_USER = "BROADCAST_ADD_USER";
+    public static final String BROADCAST_ADD_SCORE = "BROADCAST_ADD_SCORE";
 
     // BroadcastTaskResult tags
     public static final String NEW_GAME_ADDED = "NEW_GAME_ADDED";
@@ -220,12 +221,12 @@ public class GameService extends Service {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 Intent broadcastIntent = new Intent();
-                broadcastIntent.setAction(BROADCAST_ADD_USER);
+                broadcastIntent.setAction(BROADCAST_ADD_SCORE);
 
                 // Check if game exists in firebase
                 if (snapshot.hasChild(gameKey)) {
                     // Check if player score has already been added
-                    if (!snapshot.child(gameKey).child(HOLES_LEVEL).child(holeIndex).hasChild(player.UUID)) {
+                    if (!snapshot.child(gameKey).child(HOLES_LEVEL).child(holeIndex).child(SCORES_LEVEL).hasChild(player.UUID)) {
                         Score score = new Score(player, value);
                         mDatabase.child(GAMES_LEVEL).child(gameKey).child(HOLES_LEVEL).child(holeIndex).child(SCORES_LEVEL).child(player.UUID).setValue(score);
                         broadcastIntent.putExtra(EXTRA_ADD_SCORE_SUCCESS, true);
@@ -234,7 +235,7 @@ public class GameService extends Service {
                         broadcastIntent.putExtra(EXTRA_ADD_SCORE_SUCCESS, false);
                 }
                 else {  //Add failed; tell user
-                    broadcastIntent.putExtra(EXTRA_ADD_SUCCESS, false);
+                    broadcastIntent.putExtra(EXTRA_ADD_SCORE_SUCCESS, false);
                 }
                 Log.d(LOG, "Broadcasting join game result from Game Service");
                 LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(broadcastIntent);
