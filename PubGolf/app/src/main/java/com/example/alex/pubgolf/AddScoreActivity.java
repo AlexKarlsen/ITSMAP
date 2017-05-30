@@ -39,14 +39,12 @@ public class AddScoreActivity extends AppCompatActivity {
     TextView enterScoreTextView;
     Button doneButton;
 
+    // BL globals
     GameService gameService;
     Boolean bound = false;
     Game game;
     Player selectedPlayer = null;
-
     Map<String, Player> playerMap;
-
-
     Hole hole;
 
     @Override
@@ -54,41 +52,29 @@ public class AddScoreActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_score);
 
-        activityTitleTextView = (TextView) findViewById(R.id.addScoreActivityTitleTextView);
-
-        Intent gameServiceIntent = new Intent(this, GameService.class);
-        startService(gameServiceIntent);
-        bindService(gameServiceIntent, connection, Context.BIND_IMPORTANT);
-
-        enterScoreTextView = (TextView) findViewById(R.id.enterScoreTextView);
-        enterScoreTextView.setText("Select Score");
-
-        doneButton = (Button) findViewById(R.id.doneButton);
-        doneButton.setText("Done");
-
-        if(selectedPlayer == null){
-            doneButton.setEnabled(false);
-        }
-
-        doneButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                gameService.addScoreToHole(game.Key, String.valueOf(hole.Index), selectedPlayer, scorePicker.getValue());
-                setResult(RESULT_OK);
-                finish();
-            }
-        });
-
-        playerSpinner = (Spinner) findViewById(R.id.playersSpinner);
-
+        // Get Intent
         Intent intent = getIntent();
         if (intent != null) {
             handleStartWithIntent(intent);
         }
 
-        activityTitleTextView.setText("Add a score for Hole " + (hole.Index+1) + " " + "'"+hole.Name+"'");
+        //Initialize all sub-modules
+        initializeSubViews();
+        initializeScorePicker();
+        initializeSpinner();
 
+    }
 
+    // https://developer.android.com/reference/android/widget/NumberPicker.html#NumberPicker(android.content.Context,%20android.util.AttributeSet)
+    private void initializeScorePicker() {
+        scorePicker = (NumberPicker) findViewById(R.id.scorePicker);
+        scorePicker.setMinValue(MinimumScore);
+        scorePicker.setMaxValue(MaximumScore);
+    }
+
+    // Initializes spinner. It disables position 0 and greys it out to make a hint text.
+    // https://android--code.blogspot.dk/2015/08/android-spinner-hint.html
+    private void initializeSpinner() {
         ArrayList<String> playerNames = new ArrayList<>();
         //Hint text
         playerNames.add("Select A Player");
@@ -132,6 +118,7 @@ public class AddScoreActivity extends AppCompatActivity {
         // Apply the adapter to the spinner
         playerSpinner.setAdapter(adapter);
 
+        // Saves the selected player to enable adding score
         playerSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -160,9 +147,38 @@ public class AddScoreActivity extends AppCompatActivity {
             }
         });
 
-        scorePicker = (NumberPicker) findViewById(R.id.scorePicker);
-        scorePicker.setMinValue(MinimumScore);
-        scorePicker.setMaxValue(MaximumScore);
+
+    }
+
+    private void initializeSubViews(){
+        activityTitleTextView = (TextView) findViewById(R.id.addScoreActivityTitleTextView);
+
+        Intent gameServiceIntent = new Intent(this, GameService.class);
+        startService(gameServiceIntent);
+        bindService(gameServiceIntent, connection, Context.BIND_IMPORTANT);
+
+        enterScoreTextView = (TextView) findViewById(R.id.enterScoreTextView);
+        enterScoreTextView.setText("Select Score");
+
+        doneButton = (Button) findViewById(R.id.doneButton);
+        doneButton.setText("Done");
+
+        playerSpinner = (Spinner) findViewById(R.id.playersSpinner);
+
+        activityTitleTextView.setText("Add a score for Hole " + (hole.Index+1) + " " + "'"+hole.Name+"'");
+
+        if(selectedPlayer == null){
+            doneButton.setEnabled(false);
+        }
+
+        doneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gameService.addScoreToHole(game.Key, String.valueOf(hole.Index), selectedPlayer, scorePicker.getValue());
+                setResult(RESULT_OK);
+                finish();
+            }
+        });
     }
 
     protected void handleStartWithIntent(Intent intent) {
@@ -173,6 +189,7 @@ public class AddScoreActivity extends AppCompatActivity {
             playerMap = new HashMap<>();
             playerMap.putAll(game.Players);
 
+            // If the player already has a score for the particular hole it is removed from the map
             if (hole.Scores != null) {
                 for (Score score : hole.Scores.values()) {
 
