@@ -27,8 +27,6 @@ public class GameListActivity extends AppCompatActivity {
     public static final String EXTRA_GAME = "EXTRA_GAME";
 
     ArrayList<Game> gamesList = new ArrayList<Game>();
-    //Boolean bound = false;
-    //GameService gameService;
 
     // Views
     ListView gameListView;
@@ -41,7 +39,6 @@ public class GameListActivity extends AppCompatActivity {
 
         Intent gameServiceIntent = new Intent(this, GameService.class);
         startService(gameServiceIntent);
-        //bindService(gameServiceIntent, connection, Context.BIND_IMPORTANT);
 
         initializeSubviews();
     }
@@ -84,33 +81,6 @@ public class GameListActivity extends AppCompatActivity {
         gameListView.setAdapter(adapter);
     }
 
-    /*
-    // Modified from: https://developer.android.com/guide/components/bound-services.html#Binder
-    private ServiceConnection connection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-
-            // Cast the IBinder and get WeatherInfoService instance.
-            GameService.GameServiceBinder binder = (GameService.GameServiceBinder) service;
-            gameService = binder.getService();
-            bound = true;
-
-            // Update the views with data from the service.
-            if (gameService != null) {
-                //updateCurrentView(weatherInfoService.getCurrentWeather());
-                //updateHistoricListView(weatherInfoService.getPastWeather());
-            }
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            bound = false;
-        }
-    };
-*/
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -124,12 +94,6 @@ public class GameListActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-
-        // Unbind from the service;
-        //if (bound) {
-            //unbindService(connection);
-          //  bound = false;
-        //}
 
         // Unregister broadcast receiver.
         //LocalBroadcastManager.getInstance(this).unregisterReceiver(onGameServiceResult);
@@ -154,11 +118,12 @@ public class GameListActivity extends AppCompatActivity {
             Game game = (Game)intent.getSerializableExtra(GameService.EXTRA_GAME);
 
             if (description == GameService.NEW_GAME_ADDED) {
+
                 gamesList.add(game);
                 updateGamesListView(gamesList);
             }
-            else if (description == GameService.OLD_GAME_CHANGED)
-            {
+            else if (description == GameService.OLD_GAME_CHANGED) {
+
                 // Find index of old game in existing list
                 Game gameToRemove = new Game();
                 for(Game gameIterator : gamesList)
@@ -173,7 +138,8 @@ public class GameListActivity extends AppCompatActivity {
                 gamesList.add(game);
                 updateGamesListView(gamesList);
             }
-            else if (description == GameService.OLD_GAME_REMOVED){
+            else if (description == GameService.OLD_GAME_REMOVED) {
+
                 // Find index of old game in existing list
                 Game gameToRemove = new Game();
                 for(Game gameIterator : gamesList)
