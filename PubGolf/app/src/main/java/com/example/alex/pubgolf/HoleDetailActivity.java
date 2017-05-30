@@ -56,6 +56,10 @@ public class HoleDetailActivity extends AppCompatActivity {
                 startActivity(addScoreIntent);
             }
         });
+
+        // If hole isnt active or passed then disable button.
+        if (hole.Index > game.HoleIndex)
+            addScorebutton.setEnabled(false);
     }
 
     protected void handleStartWithIntent(Intent intent) {
