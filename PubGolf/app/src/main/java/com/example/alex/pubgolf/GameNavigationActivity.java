@@ -1,10 +1,14 @@
 package com.example.alex.pubgolf;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -24,8 +28,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.alex.pubgolf.Adapters.HoleArrayAdapter;
+import com.example.alex.pubgolf.Adapters.ScoreArrayAdapter;
 import com.example.alex.pubgolf.Models.Game;
 import com.example.alex.pubgolf.Models.Hole;
+import com.example.alex.pubgolf.Models.Player;
+import com.example.alex.pubgolf.Models.Score;
+import com.example.alex.pubgolf.Models.Scoreboard;
 
 import java.util.ArrayList;
 
@@ -56,8 +64,7 @@ public class GameNavigationActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
+        // Create the adapter that will return a fragment for each of the three primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
@@ -77,6 +84,7 @@ public class GameNavigationActivity extends AppCompatActivity {
     protected void handleStartWithIntent(Intent intent) {
         game = (Game) intent.getExtras().getSerializable(GameListActivity.EXTRA_GAME);
 
+        // Show the navigation button and game title in the toolbar.
         ActionBar actionBar = getSupportActionBar();
         if (actionBar == null) return;
         actionBar.setTitle(game.Title);
@@ -85,26 +93,25 @@ public class GameNavigationActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
+
+        // Go back when the back arrow is pressed.
         onBackPressed();
         return true;
     }
 
     /**
-     * A placeholder fragment containing a simple view.
+     * A fragment for displaying different game information.
      */
     public static class GameFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
+
         private static final String ARG_SECTION_NUMBER = "section_number";
+        private int sectionNumber;
+        private View view;
 
         Game game;
         ArrayList<Hole> holesList;
 
-
-        public GameFragment() {
-        }
+        public GameFragment() { }
 
         /**
          * Returns a new instance of this fragment for the given section
@@ -123,48 +130,121 @@ public class GameNavigationActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
 
-            int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
+            sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
 
-            if (sectionNumber == 1) {
+            // Return a different view based on the section number.
+
+            if (sectionNumber == 0) {
 
                 // Game details section.
 
                 View rootView = inflater.inflate(R.layout.fragment_game_details, container, false);
-
-                TextView descriptionTextView = (TextView) rootView.findViewById(R.id.gameDescriptionLabel);
-                descriptionTextView.setText(game.Description);
-
-                TextView dateTextView = (TextView) rootView.findViewById(R.id.gameDateLabel);
-                dateTextView.setText(game.GetStartTimeAsTimestamp().toString());
-
+                view = rootView;
+                updateView();
                 return rootView;
 
-            } else if (sectionNumber == 2) {
+            } else if (sectionNumber == 1) {
 
                 // Course section.
 
                 View rootView = inflater.inflate(R.layout.fragment_game_course, container, false);
-
-                if (game.Holes != null) {
-
-                    holesList = new ArrayList<Hole>();
-                    holesList.addAll(game.Holes);
-
-                    ListView holesListView = (ListView) rootView.findViewById(R.id.holesListView);
-                    HoleArrayAdapter adapter = new HoleArrayAdapter(getActivity(), R.layout.hole_info_list_item, holesList);
-                    holesListView.setAdapter(adapter);
-                }
-
+                view = rootView;
+                updateView();
                 return rootView;
 
             } else {
 
                 // Scoreboard section.
 
-                View rootView = inflater.inflate(R.layout.fragment_game_navigation, container, false);
-                TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-                textView.setText(getString(R.string.section_format, sectionNumber));
+                View rootView = inflater.inflate(R.layout.fragment_game_scoreboard, container, false);
+                view = rootView;
+                updateView();
                 return rootView;
+            }
+        }
+
+        @Override
+        public void onCreate(@Nullable Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+
+            // Register broadcast receivers.
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(GameService.BROADCAST_GAME_SERVICE_RESULT);
+            LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onGameServiceResult, filter);
+        }
+
+        @Override
+        public void onDestroy() {
+            super.onDestroy();
+
+            // Unregister broadcast receivers.
+            LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onGameServiceResult);
+        }
+
+        private BroadcastReceiver onGameServiceResult = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                String description = intent.getStringExtra(GameService.EXTRA_DESCRIPTION);
+
+                // Only react on game change notifications.
+
+                if (description.equals(GameService.OLD_GAME_CHANGED)) {
+
+                    Game receivedGame = (Game) intent.getSerializableExtra(GameService.EXTRA_GAME);
+
+                    // Only update if the updated game is the one currently displayed.
+                    if (game != null && receivedGame != null) {
+                        if (game.Key.equals(receivedGame.Key)) {
+                            game = receivedGame;
+                            updateView();
+                        }
+                    }
+                }
+            }
+        };
+
+        private void updateView() {
+
+            // Updates the state of the view.
+
+            if (view == null) return;
+
+            if (sectionNumber == 0) {
+
+                // Game details section.
+
+                TextView descriptionTextView = (TextView) view.findViewById(R.id.gameDescriptionLabel);
+                descriptionTextView.setText(game.Description);
+
+                TextView dateTextView = (TextView) view.findViewById(R.id.gameDateLabel);
+                dateTextView.setText(game.GetStartTimeAsTimestamp().toString());
+
+            } else if (sectionNumber == 1) {
+
+                // Course section.
+
+                if (game.Holes != null) {
+
+                    holesList = new ArrayList<Hole>();
+                    holesList.addAll(game.Holes);
+
+                    ListView holesListView = (ListView) view.findViewById(R.id.holesListView);
+                    HoleArrayAdapter adapter = new HoleArrayAdapter(getActivity(), R.layout.hole_info_list_item, holesList);
+                    holesListView.setAdapter(adapter);
+                }
+
+            } else {
+
+                // Scoreboard section.
+
+                if (game != null) {
+
+                    ArrayList<Score> scoreList = Scoreboard.calculateScoresForGame(game);
+                    ListView scoreboardListView = (ListView) view.findViewById(R.id.scoreboardListView);
+                    ScoreArrayAdapter adapter = new ScoreArrayAdapter(getActivity(), R.layout.scoreboard_list_item, scoreList);
+                    scoreboardListView.setAdapter(adapter);
+                }
             }
         }
     }
@@ -181,19 +261,22 @@ public class GameNavigationActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
+
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return GameFragment.newInstance(position + 1, game);
+            return GameFragment.newInstance(position, game);
         }
 
         @Override
         public int getCount() {
+
             // Show 3 total pages.
             return 3;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
+
             switch (position) {
                 case 0:
                     return "Details";
@@ -202,6 +285,7 @@ public class GameNavigationActivity extends AppCompatActivity {
                 case 2:
                     return "Scoreboard";
             }
+
             return null;
         }
     }

@@ -10,6 +10,7 @@ import android.widget.Button;
 public class LobbyActivity extends AppCompatActivity {
 
     public static final int JOIN_GAME_REQUEST = 1;
+    public static final int HOST_GAME_REQUEST = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +26,7 @@ public class LobbyActivity extends AppCompatActivity {
                 // Create intent for host game activity.
                 Context context = getApplicationContext();
                 Intent hostGameIntent = new Intent(context, EditGameActivity.class);
-                startActivity(hostGameIntent);
+                startActivityForResult(hostGameIntent, HOST_GAME_REQUEST);
             }
         });
 
@@ -47,7 +48,12 @@ public class LobbyActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == JOIN_GAME_REQUEST && resultCode == RESULT_OK) {
-
+            setResult(RESULT_OK);
+            finish();
+        }
+        else if (requestCode == HOST_GAME_REQUEST && resultCode == RESULT_OK) {
+            setResult(RESULT_OK);
+            finish();
         }
     }
 }

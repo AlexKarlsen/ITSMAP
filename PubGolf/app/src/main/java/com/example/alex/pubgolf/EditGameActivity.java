@@ -22,6 +22,8 @@ import java.util.HashMap;
 
 public class EditGameActivity extends AppCompatActivity {
 
+    public static final int EDIT_COURSE_REQUEST = 10;
+
     public static final String EXTRA_GAME = "EXTRA_GAME";
 
     EditText titleEditText;
@@ -144,7 +146,7 @@ public class EditGameActivity extends AppCompatActivity {
         Context context = getApplicationContext();
         Intent editCourseIntent = new Intent(context, EditCourseActivity.class);
         editCourseIntent.putExtra(EXTRA_GAME, game);
-        startActivity(editCourseIntent);
+        startActivityForResult(editCourseIntent, EDIT_COURSE_REQUEST);
     }
 
     protected boolean inputIsValid() {
@@ -157,5 +159,14 @@ public class EditGameActivity extends AppCompatActivity {
         }
 
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == EDIT_COURSE_REQUEST && resultCode == RESULT_OK) {
+            setResult(RESULT_OK);
+            finish();
+        }
     }
 }
