@@ -185,6 +185,7 @@ public class GameListActivity extends AppCompatActivity {
                 }
 
                 gamesList.remove(gameToRemove);
+                updateGamesListView(gamesList);
             }
         }
     };
