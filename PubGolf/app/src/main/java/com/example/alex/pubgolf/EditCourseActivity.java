@@ -63,6 +63,9 @@ public class EditCourseActivity extends AppCompatActivity {
 
                 // Save the created game to Firebase.
                 gameService.createNewGame(game);
+
+                setResult(RESULT_OK);
+                finish();
             }
         });
 
