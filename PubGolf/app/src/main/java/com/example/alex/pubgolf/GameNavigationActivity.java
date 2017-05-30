@@ -23,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -33,6 +34,8 @@ import com.example.alex.pubgolf.Models.Hole;
 import com.example.alex.pubgolf.Models.Score;
 import com.example.alex.pubgolf.Models.Scoreboard;
 import com.facebook.Profile;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -242,6 +245,9 @@ public class GameNavigationActivity extends AppCompatActivity {
 
                 // Game details section.
 
+                TextView keyTextView = (TextView) view.findViewById(R.id.keyTextView);
+                keyTextView.setText(game.Key);
+
                 TextView descriptionTextView = (TextView) view.findViewById(R.id.gameDescriptionLabel);
                 descriptionTextView.setText(game.Description);
 
@@ -264,6 +270,21 @@ public class GameNavigationActivity extends AppCompatActivity {
                         break;
                 }
 
+                Button shareButton = (Button) view.findViewById(R.id.shareButton);
+                shareButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // Creates a share intent and creates a chooser
+                        // On emulator the chooser is skipped and messenger is automaticly chosen.
+                        // Don't know if that also happens on an actual phone.
+                        Intent sendIntent = new Intent();
+                        sendIntent.setAction(Intent.ACTION_SEND);
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, game.Key);
+                        sendIntent.putExtra(Intent.EXTRA_SUBJECT, "Pub Golf Key");
+                        sendIntent.setType("text/plain");
+                        startActivity(Intent.createChooser(sendIntent, "Share via"));
+                    }
+                });
 
             } else if (sectionNumber == 1) {
 
