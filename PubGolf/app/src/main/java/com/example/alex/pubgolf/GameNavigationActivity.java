@@ -24,8 +24,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.alex.pubgolf.Adapters.HoleArrayAdapter;
+import com.example.alex.pubgolf.Adapters.ScoreArrayAdapter;
 import com.example.alex.pubgolf.Models.Game;
 import com.example.alex.pubgolf.Models.Hole;
+import com.example.alex.pubgolf.Models.Player;
+import com.example.alex.pubgolf.Models.Score;
 
 import java.util.ArrayList;
 
@@ -102,7 +105,6 @@ public class GameNavigationActivity extends AppCompatActivity {
         Game game;
         ArrayList<Hole> holesList;
 
-
         public GameFragment() {
         }
 
@@ -125,7 +127,7 @@ public class GameNavigationActivity extends AppCompatActivity {
 
             int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
 
-            if (sectionNumber == 1) {
+            if (sectionNumber == 0) {
 
                 // Game details section.
 
@@ -139,7 +141,7 @@ public class GameNavigationActivity extends AppCompatActivity {
 
                 return rootView;
 
-            } else if (sectionNumber == 2) {
+            } else if (sectionNumber == 1) {
 
                 // Course section.
 
@@ -161,9 +163,27 @@ public class GameNavigationActivity extends AppCompatActivity {
 
                 // Scoreboard section.
 
-                View rootView = inflater.inflate(R.layout.fragment_game_navigation, container, false);
-                TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-                textView.setText(getString(R.string.section_format, sectionNumber));
+                View rootView = inflater.inflate(R.layout.fragment_game_scoreboard, container, false);
+
+                if (game.Holes != null) {
+
+                    Player p1 = new Player("", "Paul Denino");
+                    Score s1 = new Score(p1, (long) 1);
+                    Player p2 = new Player("", "Enza Denino");
+                    Score s2 = new Score(p2, (long) 4);
+                    Player p3 = new Player("", "M. Andy");
+                    Score s3 = new Score(p3, (long) 9);
+
+                    ArrayList<Score> scoreList = new ArrayList<Score>();
+                    scoreList.add(s1);
+                    scoreList.add(s2);
+                    scoreList.add(s3);
+
+                    ListView scoreboardListView = (ListView) rootView.findViewById(R.id.scoreboardListView);
+                    ScoreArrayAdapter adapter = new ScoreArrayAdapter(getActivity(), R.layout.scoreboard_list_item, scoreList);
+                    scoreboardListView.setAdapter(adapter);
+                }
+
                 return rootView;
             }
         }
@@ -183,7 +203,7 @@ public class GameNavigationActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return GameFragment.newInstance(position + 1, game);
+            return GameFragment.newInstance(position, game);
         }
 
         @Override
