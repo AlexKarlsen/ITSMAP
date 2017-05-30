@@ -159,12 +159,10 @@ public class GameNavigationActivity extends AppCompatActivity {
 
                         // Pass the selected hole index and game to the detail activity.
                         int selectedHoleIndex = pos;
-                        if (selectedHoleIndex <= game.HoleIndex) {
-                            Intent detailIntent = new Intent(getContext(), HoleDetailActivity.class);
-                            detailIntent.putExtra(GameService.EXTRA_GAME, game);
-                            detailIntent.putExtra(EXTRA_HOLE, game.Holes.get(selectedHoleIndex));
-                            startActivity(detailIntent);
-                        }
+                        Intent detailIntent = new Intent(getContext(), HoleDetailActivity.class);
+                        detailIntent.putExtra(GameService.EXTRA_GAME, game);
+                        detailIntent.putExtra(EXTRA_HOLE, game.Holes.get(selectedHoleIndex));
+                        startActivity(detailIntent);
                     }
                 });
 
