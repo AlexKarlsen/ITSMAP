@@ -280,7 +280,7 @@ public class GameNavigationActivity extends AppCompatActivity {
                     // Update the fab.
                     FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.advanceHoleIndexFAB);
 
-                    if (Profile.getCurrentProfile().getId().equals(game.Owner.UUID)) {
+                    if (Profile.getCurrentProfile().getId().equals(game.Owner.UUID) && game.State != Game.GameState.Cancelled && game.State != Game.GameState.Completed) {
 
                         fab.setVisibility(View.VISIBLE);
                         fab.setOnClickListener(new View.OnClickListener() {
