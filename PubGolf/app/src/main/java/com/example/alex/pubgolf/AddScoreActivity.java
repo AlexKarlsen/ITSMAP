@@ -14,6 +14,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.alex.pubgolf.Models.Game;
+import com.example.alex.pubgolf.Models.Hole;
 import com.example.alex.pubgolf.Models.Player;
 
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ public class AddScoreActivity extends AppCompatActivity {
     List<Player> playerList;
     Map<String, Player> playerMap;
 
-    int holeIndex;
+    Hole hole;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,15 +61,15 @@ public class AddScoreActivity extends AppCompatActivity {
             handleStartWithIntent(intent);
         }
 
-        activityTitleTextView.setText("Add a score for Hole " + holeIndex);
+        activityTitleTextView.setText("Add a score for Hole " + (hole.Index+1));
+        
+        ArrayList<String> playerNames = new ArrayList<>();
+        //Hint text
+        playerNames.add("Select A Player");
+        for (Player player : playerMap.values()) playerNames.add(player.Name);
 
-        // Test Array
-        // String[] stringlist = new String[]{"Select A Player","Alex", "Emil", "Lasse"};
-
-
-
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, new ArrayList<String>(playerMap.keySet())){
+        // Create an ArrayAdapter using the string array playerNames
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, playerNames){
             @Override
             public boolean isEnabled(int position){
                 if(position == 0)
@@ -129,7 +130,7 @@ public class AddScoreActivity extends AppCompatActivity {
 
     protected void handleStartWithIntent(Intent intent) {
         Game game = (Game) intent.getExtras().getSerializable(EditGameActivity.EXTRA_GAME);
-        holeIndex = intent.getIntExtra(GameNavigationActivity.EXTRA_HOLE_INDEX,-1);
+        hole = (Hole) intent.getExtras().getSerializable(GameNavigationActivity.EXTRA_HOLE);
         if (game == null) return;
         if (game.Players != null) {
             playerMap = new HashMap<>();
