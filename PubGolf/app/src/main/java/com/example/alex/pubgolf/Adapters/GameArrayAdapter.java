@@ -70,7 +70,7 @@ public class GameArrayAdapter extends ArrayAdapter {
                 outerLinearLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorHighlight));
             }
             // Write "Hosting" in hostingTextView if user is host
-            if (info.Owner.UUID == Profile.getCurrentProfile().getId()) // if host
+            if (Profile.getCurrentProfile().getId().equals(info.Owner.UUID)) // if host
                 hostingTextView.setText("Hosting");
             else
                 hostingTextView.setText("");

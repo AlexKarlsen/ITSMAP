@@ -151,6 +151,20 @@ public class GameService extends Service {
         mDatabase.child(GAMES_LEVEL).updateChildren(gameUpdates);
     }
 
+    // Update game state by passing game key and the new state
+    public void updateGameState(String gameKey, Game.GameState state){
+        Map<String, Object> gameUpdates = new HashMap<String, Object>();
+        gameUpdates.put("State", state);
+        mDatabase.child(GAMES_LEVEL).child(gameKey).updateChildren(gameUpdates);
+    }
+
+    // Update game hole index by passing game key and the new index
+    public void updateGameHoleIndex(String gameKey, long holeIndex){
+        Map<String, Object> gameUpdates = new HashMap<String, Object>();
+        gameUpdates.put("HoleIndex", holeIndex);
+        mDatabase.child(GAMES_LEVEL).child(gameKey).updateChildren(gameUpdates);
+    }
+
     // Remove game by key
     public void removeGame(String gameKey){
         mDatabase.child(GAMES_LEVEL).child(gameKey).removeValue();

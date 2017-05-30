@@ -1,10 +1,13 @@
 package com.example.alex.pubgolf;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -106,6 +109,8 @@ public class GameNavigationActivity extends AppCompatActivity {
         private View view;
 
         Game game;
+        GameService gameService;
+        Boolean bound = false;
         ArrayList<Hole> holesList;
 
         public GameFragment() { }
@@ -183,6 +188,11 @@ public class GameNavigationActivity extends AppCompatActivity {
             IntentFilter filter = new IntentFilter();
             filter.addAction(GameService.BROADCAST_GAME_SERVICE_RESULT);
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onGameServiceResult, filter);
+
+            // Start the game service.
+            Intent gameServiceIntent = new Intent(getActivity(), GameService.class);
+            getActivity().startService(gameServiceIntent);
+            getActivity().bindService(gameServiceIntent, connection, Context.BIND_IMPORTANT);
         }
 
         @Override
@@ -191,6 +201,12 @@ public class GameNavigationActivity extends AppCompatActivity {
 
             // Unregister broadcast receivers.
             LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onGameServiceResult);
+
+            // Unbind from the service;
+            if (bound) {
+                getActivity().unbindService(connection);
+                bound = false;
+            }
         }
 
         private BroadcastReceiver onGameServiceResult = new BroadcastReceiver() {
@@ -247,12 +263,29 @@ public class GameNavigationActivity extends AppCompatActivity {
                     // Update the fab.
                     FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.advanceHoleIndexFAB);
 
-                    if (game.Owner.UUID == Profile.getCurrentProfile().getId()) {
+                    if (Profile.getCurrentProfile().getId().equals(game.Owner.UUID)) {
                         fab.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
 
-                                // TODO: Increment active hole index.
+                                if (gameService != null) {
+
+                                    if (game.State == Game.GameState.Created) {
+
+                                        // Set game state to .InProgress
+                                        gameService.updateGameState(game.Key, Game.GameState.InProgress);
+
+                                    } else if (game.HoleIndex == game.Holes.size() - 1) {
+
+                                        // Set game state to .Completed
+                                        gameService.updateGameState(game.Key, Game.GameState.Completed);
+
+                                    } else if (game.State != Game.GameState.Completed && game.State != Game.GameState.Cancelled) {
+
+                                        // Increment the hole index
+                                        gameService.updateGameHoleIndex(game.Key, game.HoleIndex + 1);
+                                    }
+                                }
                             }
                         });
                     } else {
@@ -275,6 +308,24 @@ public class GameNavigationActivity extends AppCompatActivity {
                 }
             }
         }
+
+        // Modified from: https://developer.android.com/guide/components/bound-services.html#Binder
+        private ServiceConnection connection = new ServiceConnection() {
+
+            @Override
+            public void onServiceConnected(ComponentName className, IBinder service) {
+
+                // Cast the IBinder and get WeatherInfoService instance.
+                GameService.GameServiceBinder binder = (GameService.GameServiceBinder) service;
+                gameService = binder.getService();
+                bound = true;
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName arg0) {
+                bound = false;
+            }
+        };
     }
 
     /**
