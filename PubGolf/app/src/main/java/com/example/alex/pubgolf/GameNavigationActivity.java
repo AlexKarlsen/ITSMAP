@@ -38,7 +38,7 @@ import java.util.ArrayList;
 
 public class GameNavigationActivity extends AppCompatActivity {
 
-    public static final String EXTRA_HOLE_INDEX = "EXTRA_HOLE_INDEX";
+    public static final String EXTRA_HOLE = "EXTRA_HOLE";
     Game game;
 
     /**
@@ -160,7 +160,7 @@ public class GameNavigationActivity extends AppCompatActivity {
                         if (selectedHoleIndex <= game.HoleIndex) {
                             Intent addScoreIntent = new Intent(getContext(), AddScoreActivity.class);
                             addScoreIntent.putExtra(GameService.EXTRA_GAME, game);
-                            addScoreIntent.putExtra(EXTRA_HOLE_INDEX, selectedHoleIndex);
+                            addScoreIntent.putExtra(EXTRA_HOLE, selectedHoleIndex);
                             startActivity(addScoreIntent);
                         }
                     }
