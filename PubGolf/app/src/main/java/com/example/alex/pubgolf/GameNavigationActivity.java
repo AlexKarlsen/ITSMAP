@@ -39,6 +39,8 @@ import java.util.ArrayList;
 public class GameNavigationActivity extends AppCompatActivity {
 
     public static final String EXTRA_HOLE = "EXTRA_HOLE";
+    public static final String EXTRA_GAME = "EXTRA_GAME";
+
     Game game;
 
     /**
@@ -155,13 +157,13 @@ public class GameNavigationActivity extends AppCompatActivity {
                 ((ListView) view.findViewById(R.id.holesListView)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     public void onItemClick(AdapterView<?> list, View v, int pos, long id) {
 
-                        // Pass the selected hole index and game to the score activity.
+                        // Pass the selected hole index and game to the detail activity.
                         int selectedHoleIndex = pos;
                         if (selectedHoleIndex <= game.HoleIndex) {
-                            Intent addScoreIntent = new Intent(getContext(), AddScoreActivity.class);
-                            addScoreIntent.putExtra(GameService.EXTRA_GAME, game);
-                            addScoreIntent.putExtra(EXTRA_HOLE, selectedHoleIndex);
-                            startActivity(addScoreIntent);
+                            Intent detailIntent = new Intent(getContext(), HoleDetailActivity.class);
+                            detailIntent.putExtra(GameService.EXTRA_GAME, game);
+                            detailIntent.putExtra(EXTRA_HOLE, game.Holes.get(selectedHoleIndex));
+                            startActivity(detailIntent);
                         }
                     }
                 });
