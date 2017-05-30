@@ -94,8 +94,6 @@ public class LoginActivity extends AppCompatActivity {
             protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
                 if (currentAccessToken == null) {
                     continueButton.setVisibility(View.GONE);
-                } else {
-                    continueButton.setVisibility(View.VISIBLE);
                 }
             }
         };
@@ -145,6 +143,8 @@ public class LoginActivity extends AppCompatActivity {
                             Context context = getApplicationContext();
                             Intent gameListIntent = new Intent(context, GameListActivity.class);
                             startActivity(gameListIntent);
+
+                            continueButton.setVisibility(View.VISIBLE);
 
                         } else {
 
