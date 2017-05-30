@@ -264,6 +264,8 @@ public class GameNavigationActivity extends AppCompatActivity {
                     FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.advanceHoleIndexFAB);
 
                     if (Profile.getCurrentProfile().getId().equals(game.Owner.UUID)) {
+
+                        fab.setVisibility(View.VISIBLE);
                         fab.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -289,6 +291,7 @@ public class GameNavigationActivity extends AppCompatActivity {
                             }
                         });
                     } else {
+                        fab.setVisibility(View.GONE);
                         fab.setOnClickListener(null);
                     }
 
