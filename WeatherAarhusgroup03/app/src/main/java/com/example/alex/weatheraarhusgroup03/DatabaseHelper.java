@@ -117,8 +117,12 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
         Cursor cursor = db.rawQuery(selectQuery, null);
 
+        WeatherInfo weatherInfo = new WeatherInfo();
+
         ArrayList<WeatherInfo> infos = getWeatherInfoFromCursor(cursor);
-        WeatherInfo weatherInfo = infos.get(0);
+        if(infos != null){
+        weatherInfo = infos.get(0);
+        }
 
         return weatherInfo;
     }
