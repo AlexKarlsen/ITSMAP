@@ -1,0 +1,11 @@
+App won't start and neither compile:
+The app crashed due to the database being empty when the app installs. 
+Fixed: We have inserted a null check and the app now installs and runs without problems.
+
+Missing resource externalisation:
+Ignored: We have externalised resources. What you can see in the XML files is simply design placeholders. 
+The tag such as "sunny", "rainy" etc. is set from the code. 
+The placeholders in the XML will never be visible to the user.
+
+Missing weather pics:
+Ignored: It is not required to have pictures representing the current weather. 
